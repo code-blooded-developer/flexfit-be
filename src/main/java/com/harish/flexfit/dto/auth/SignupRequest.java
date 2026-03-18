@@ -1,11 +1,14 @@
-package com.harish.flexfit.entity.dto;
+package com.harish.flexfit.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class UserRequestDTO {
+public class SignupRequest {
+    @NotBlank
+    private String name;
+
     @Email
     @NotBlank
     private String email;
