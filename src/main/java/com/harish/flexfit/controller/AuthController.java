@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.harish.flexfit.dto.auth.AuthResponse;
 import com.harish.flexfit.dto.auth.LoginRequest;
 import com.harish.flexfit.dto.auth.SignupRequest;
 import com.harish.flexfit.service.AuthService;
@@ -27,8 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-        authService.login(request);
-        return "Login success";
+    public AuthResponse login(@RequestBody LoginRequest request) {
+        String token = authService.login(request);
+        return new AuthResponse(token);
     }
 }

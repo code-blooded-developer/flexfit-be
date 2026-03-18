@@ -8,6 +8,7 @@ import com.harish.flexfit.dto.auth.LoginRequest;
 import com.harish.flexfit.dto.auth.SignupRequest;
 import com.harish.flexfit.entity.User;
 import com.harish.flexfit.repo.UserRepository;
+import com.harish.flexfit.security.JwtService;
 
 @Service
 public class AuthService {
@@ -16,6 +17,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     public void signUp(SignupRequest request) {
         // Check if user with email already exists
@@ -32,12 +36,14 @@ public class AuthService {
     }
 
 
-    public void login(LoginRequest request) {
+    public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
+
+        return jwtService.generateToken(user.getEmail());
     }
 }
