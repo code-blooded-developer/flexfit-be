@@ -1,4 +1,4 @@
-package com.harish.flexfit.dto.auth;
+package com.harish.flexfit.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,5 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AuthResponse {
+    private String email;
     private String token;
+    private String role;
 }

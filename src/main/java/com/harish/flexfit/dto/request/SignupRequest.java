@@ -1,4 +1,4 @@
-package com.harish.flexfit.dto.auth;
+package com.harish.flexfit.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -6,13 +6,10 @@ import lombok.Data;
 
 @Data
 public class SignupRequest {
-    @NotBlank
-    private String name;
-
-    @Email
-    @NotBlank
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
     private String email;
-    
-    @NotBlank
+
+    @NotBlank(message = "Password is required")
     private String password;
 }
