@@ -33,7 +33,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.setEmail(request.getEmail());
+        String email = request.getEmail().toLowerCase().trim();
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
 
