@@ -1,11 +1,13 @@
 package com.harish.flexfit.security;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,9 +22,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -34,19 +33,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
        }
 
        String token = authHeader.substring(7);
-       String email = jwtUtil.extractEmail(token);
-
-       if(email !=null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
+       
+       try {
             if(jwtUtil.validateToken(token)) {
+                UUID userId = jwtUtil.extractUserId(token);
+
                 UsernamePasswordAuthenticationToken authToken = 
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userId, null, List.of());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+       } catch (Exception e) {
+            throw new BadRequestException("Invalid JWT token");
        }
 
         filterChain.doFilter(request, response);

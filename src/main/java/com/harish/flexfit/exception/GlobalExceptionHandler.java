@@ -1,7 +1,6 @@
 package com.harish.flexfit.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,10 +8,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.harish.flexfit.dto.response.ErrorResponse;
 
-@RestControllerAdvice
-public class GlobalExceptionHandler {
+import lombok.extern.slf4j.Slf4j;
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
             .findFirst()
             .orElse("Validation error");
         
-        logger.warn("Validation error: {}", errorMessage);
+        log.warn("Validation error: {}", errorMessage);
 
         ErrorResponse errorResponse = new ErrorResponse(400, "Bad Request", errorMessage);
 
@@ -32,15 +32,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
-        logger.warn("Business validation failed: {}", ex.getMessage());
+        log.warn("Business validation failed: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(400, "Bad Request", ex.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        logger.error("Unexpected error occurred", ex);
-        ErrorResponse errorResponse = new ErrorResponse(500, "Internal Server Error", "Something went wrong");
-        return ResponseEntity.status(500).body(errorResponse);
+        log.error("Unexpected error occurred", ex);
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error", "Something went wrong");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

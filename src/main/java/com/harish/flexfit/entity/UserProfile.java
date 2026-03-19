@@ -20,10 +20,16 @@ import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(
     name = "user_profile",
     indexes = {
@@ -33,6 +39,7 @@ import lombok.Data;
 public class UserProfile {
     @Id
     @GeneratedValue
+    @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
     @Column(nullable = false, unique = true)
