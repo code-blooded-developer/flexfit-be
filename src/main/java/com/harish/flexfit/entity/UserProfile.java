@@ -2,23 +2,31 @@ package com.harish.flexfit.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-import com.harish.flexfit.enums.ActivityLevel;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.harish.flexfit.enums.ExperienceLevel;
 import com.harish.flexfit.enums.FitnessGoal;
 import com.harish.flexfit.enums.Gender;
 import com.harish.flexfit.enums.HeightUnit;
 import com.harish.flexfit.enums.WeightUnit;
+import com.harish.flexfit.enums.WorkoutEnvironment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,9 +50,11 @@ public class UserProfile {
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private UUID userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -70,19 +80,25 @@ public class UserProfile {
     private FitnessGoal fitnessGoal;
 
     @Enumerated(EnumType.STRING)
-    private ActivityLevel activityLevel;
+    private ExperienceLevel experienceLevel;
 
+    private Integer workoutDaysPerWeek; 
+    private Integer workoutDurationMinutes;
+
+    @Enumerated(EnumType.STRING)
+    private WorkoutEnvironment workoutEnvironment;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_equipment",
+        joinColumns = @JoinColumn(name = "user_profile_id"),
+        inverseJoinColumns = @JoinColumn(name = "equipment_id")
+    )
+    private List<Equipment> equipments;
+
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

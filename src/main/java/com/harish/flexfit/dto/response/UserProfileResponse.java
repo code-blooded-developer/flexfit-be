@@ -1,11 +1,13 @@
 package com.harish.flexfit.dto.response;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
-import com.harish.flexfit.enums.ActivityLevel;
+import com.harish.flexfit.enums.ExperienceLevel;
 import com.harish.flexfit.enums.FitnessGoal;
 import com.harish.flexfit.enums.Gender;
+import com.harish.flexfit.enums.WorkoutEnvironment;
 
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +24,11 @@ public class UserProfileResponse {
     private Double weightInKg;
 
     private FitnessGoal fitnessGoal;
-    private ActivityLevel activityLevel;
+    private ExperienceLevel experienceLevel;
+
+    private Integer workoutDaysPerWeek;
+    private Integer workoutDurationMinutes;
+    private WorkoutEnvironment workoutEnvironment;
+
+    private List<EquipmentResponse> equipments;
 }

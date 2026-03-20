@@ -1,14 +1,19 @@
 package com.harish.flexfit.dto.request;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
-import com.harish.flexfit.enums.ActivityLevel;
+import com.harish.flexfit.enums.ExperienceLevel;
 import com.harish.flexfit.enums.FitnessGoal;
 import com.harish.flexfit.enums.Gender;
 import com.harish.flexfit.enums.HeightUnit;
 import com.harish.flexfit.enums.WeightUnit;
+import com.harish.flexfit.enums.WorkoutEnvironment;
 import com.harish.flexfit.validator.annotation.ValidUserProfile;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -47,6 +52,21 @@ public class UserProfileRequest {
     @NotNull(message = "Fitness goal is required")
     private FitnessGoal fitnessGoal;
 
-    @NotNull(message = "Activity level is required")
-    private ActivityLevel activityLevel;
+    @NotNull(message = "Experience level is required")
+    private ExperienceLevel experienceLevel;
+
+    @NotNull(message = "Workout days per week is required")
+    @Min(value = 1, message = "Workout days per week must be at least 1")
+    @Max(value = 7, message = "Workout days per week must be at most 7")
+    private Integer workoutDaysPerWeek;
+
+    @NotNull(message = "Workout duration is required")
+    @Min(value = 15, message = "Workout duration must be at least 15 minutes")
+    @Max(value = 180, message = "Workout duration must be at most 180 minutes")
+    private Integer workoutDurationMinutes;
+
+    @NotNull(message = "Workout environment is required")
+    private WorkoutEnvironment workoutEnvironment;
+
+    private List<UUID> equipmentIds;
 }
