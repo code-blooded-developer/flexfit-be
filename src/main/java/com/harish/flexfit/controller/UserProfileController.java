@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/v1/profile")
+@RequestMapping("/api/v1/profiles")
 @Slf4j
 public class UserProfileController {
     @Autowired
@@ -30,19 +30,16 @@ public class UserProfileController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<UserProfileResponse>> createOrUpdate(@Valid @RequestBody UserProfileRequest request) {
-        log.info("Received profile update request for userId={}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        log.info("Received profile save request for userId={}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        ApiResponse<UserProfileResponse> response = new ApiResponse<>(
-                200,
-                "Profile saved successfully",
-                userProfileService.createOrUpdateProfile(userId, request)
-        );
+        UserProfileResponse profile = userProfileService.createOrUpdateProfile(userId, request);
 
-        log.info("Profile update successful for userId={}", userId);
+        log.info("Profile save successful for userId={}", userId);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+            ApiResponse.success("Profile saved successfully", profile));
     }
 
     @GetMapping
@@ -51,15 +48,13 @@ public class UserProfileController {
 
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        ApiResponse<UserProfileResponse> response = new ApiResponse<>(
-                200,
-                "Profile retrieved successfully",
-                userProfileService.getProfile(userId)
-        );
+        UserProfileResponse profile = userProfileService.getProfile(userId);
 
         log.info("Profile retrieved successfully for userId={}", userId);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+            ApiResponse.success("Profile fetched successfully", profile)
+        );
     }
     
 }

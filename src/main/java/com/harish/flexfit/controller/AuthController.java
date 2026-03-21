@@ -37,13 +37,12 @@ public class AuthController {
 
         User user = userService.registerUser(request);
         UserResponse userResponse = new UserResponse(user.getId(), user.getEmail(), user.getRole().name());
-
-        ApiResponse<UserResponse> response =
-                new ApiResponse<>(201, "User registered successfully", userResponse);
         
         log.info("User registered successfully with email: {}", request.getEmail());
         
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.ok(
+            ApiResponse.success("User registered successfully", userResponse)
+        );
     }
 
     @PostMapping("/login")
@@ -51,12 +50,11 @@ public class AuthController {
         log.info("Login request received for email: {}", request.getEmail());
 
         AuthResponse authResponse = authService.login(request);
-
-        ApiResponse<AuthResponse> response =
-                new ApiResponse<>(200, "Login successful", authResponse);
         
         log.info("Login successful for email: {}", request.getEmail());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+            ApiResponse.success("Login successful", authResponse)
+        );
     }
 }
