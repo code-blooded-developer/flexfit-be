@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.harish.flexfit.dto.request.SignupRequest;
 import com.harish.flexfit.entity.User;
+import com.harish.flexfit.entity.UserProfile;
 import com.harish.flexfit.enums.Role;
 import com.harish.flexfit.exception.BadRequestException;
 import com.harish.flexfit.repo.UserRepository;
@@ -38,6 +39,14 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.USER);
 
         User savedUser = userRepository.save(user);
+
+        // Create user profile with name
+        UserProfile userProfile = UserProfile.builder()
+                .user(savedUser)
+                .name(request.getName())
+                .build();
+        savedUser.setUserProfile(userProfile);
+        savedUser = userRepository.save(savedUser);
 
         log.info("User registered successfully with email: {}", savedUser.getEmail());
 
