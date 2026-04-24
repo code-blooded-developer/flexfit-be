@@ -92,4 +92,14 @@ public class AuthServiceImpl implements AuthService {
 
         return new AuthResponse(user.getEmail(), newAccessToken, newRefreshToken, user.getRole().name());
     }
+
+    @Override
+    public AuthResponse generateTokensForUser(User user) {
+        log.info("Generating tokens for user: {}", user.getEmail());
+
+        String accessToken = jwtUtil.generateAccessToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+
+        return new AuthResponse(user.getEmail(), accessToken, refreshToken, user.getRole().name());
+    }
 }
