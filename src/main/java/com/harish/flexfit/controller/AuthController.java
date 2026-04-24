@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.harish.flexfit.dto.request.LoginRequest;
+import com.harish.flexfit.dto.request.RefreshTokenRequest;
 import com.harish.flexfit.dto.request.SignupRequest;
 import com.harish.flexfit.dto.response.ApiResponse;
 import com.harish.flexfit.dto.response.AuthResponse;
@@ -55,6 +56,19 @@ public class AuthController {
 
         return ResponseEntity.ok(
             ApiResponse.success("Login successful", authResponse)
+        );
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        log.info("Refresh token request received");
+
+        AuthResponse authResponse = authService.refreshToken(request);
+        
+        log.info("Token refresh successful");
+
+        return ResponseEntity.ok(
+            ApiResponse.success("Token refreshed successfully", authResponse)
         );
     }
 }

@@ -20,19 +20,43 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
+    @Value("${jwt.access-token-expiration}")
+    private long ACCESS_TOKEN_EXPIRATION;
+
+    @Value("${jwt.refresh-token-expiration}")
+    private long REFRESH_TOKEN_EXPIRATION;
+
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String generateToken(User user) {
+    public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
+                .claim("type", "access")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *60 *24))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("role", user.getRole().name())
+                .claim("type", "refresh")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // Legacy method for backward compatibility
+    public String generateToken(User user) {
+        return generateAccessToken(user);
     }
 
     public String extractEmail(String token) {
@@ -55,6 +79,25 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            String type = getClaims(token).get("type", String.class);
+            return "refresh".equals(type);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isAccessToken(String token) {
+        try {
+            String type = getClaims(token).get("type", String.class);
+            return "access".equals(type);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
     
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()

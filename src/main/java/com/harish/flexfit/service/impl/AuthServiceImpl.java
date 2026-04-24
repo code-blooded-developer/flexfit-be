@@ -1,10 +1,13 @@
 package com.harish.flexfit.service.impl;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.harish.flexfit.dto.request.LoginRequest;
+import com.harish.flexfit.dto.request.RefreshTokenRequest;
 import com.harish.flexfit.dto.response.AuthResponse;
 import com.harish.flexfit.entity.User;
 import com.harish.flexfit.exception.BadRequestException;
@@ -48,7 +51,45 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("Login successful for email: {}", request.getEmail());
 
-        String token = jwtUtil.generateToken(user);
-        return new AuthResponse(user.getEmail(), token, user.getRole().name());
+        String accessToken = jwtUtil.generateAccessToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+        
+        return new AuthResponse(user.getEmail(), accessToken, refreshToken, user.getRole().name());
+    }
+
+    @Override
+    public AuthResponse refreshToken(RefreshTokenRequest request) {
+        log.info("Refresh token request received");
+
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtUtil.validateToken(refreshToken)) {
+            log.warn("Invalid refresh token");
+            throw new BadRequestException("Invalid or expired refresh token");
+        }
+
+        if (!jwtUtil.isRefreshToken(refreshToken)) {
+            log.warn("Token is not a refresh token");
+            throw new BadRequestException("Invalid token type");
+        }
+
+        UUID userId = jwtUtil.extractUserId(refreshToken);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("User not found for refresh token");
+                    return new BadRequestException("User not found");
+                });
+
+        if (!user.isActive()) {
+            log.warn("User account is disabled");
+            throw new BadRequestException("User account is disabled");
+        }
+
+        log.info("Refresh token successful for user: {}", user.getEmail());
+
+        String newAccessToken = jwtUtil.generateAccessToken(user);
+        String newRefreshToken = jwtUtil.generateRefreshToken(user);
+
+        return new AuthResponse(user.getEmail(), newAccessToken, newRefreshToken, user.getRole().name());
     }
 }
