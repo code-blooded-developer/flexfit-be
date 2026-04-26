@@ -1,5 +1,7 @@
 package com.harish.flexfit.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -7,16 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.harish.flexfit.dto.request.LoginRequest;
-import com.harish.flexfit.dto.request.RefreshTokenRequest;
 import com.harish.flexfit.dto.request.SignupRequest;
 import com.harish.flexfit.dto.response.ApiResponse;
 import com.harish.flexfit.dto.response.AuthResponse;
 import com.harish.flexfit.dto.response.UserResponse;
 import com.harish.flexfit.entity.User;
+import com.harish.flexfit.exception.BadRequestException;
 import com.harish.flexfit.service.AuthService;
 import com.harish.flexfit.service.UserService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -134,11 +137,24 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest request,
+            HttpServletRequest request,
             HttpServletResponse response) {
         log.info("Refresh token request received");
 
-        AuthResponse authResponse = authService.refreshToken(request);
+        String refreshToken = null;
+        if (request.getCookies() != null) {
+            refreshToken = Arrays.stream(request.getCookies())
+                .filter(c -> c.getName().equals(refreshTokenCookieName))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
+        }
+
+        if (refreshToken == null) {
+            throw new BadRequestException("Refresh token not found");
+        }
+
+        AuthResponse authResponse = authService.refreshToken(refreshToken);
         
         log.info("Token refresh successful");
 

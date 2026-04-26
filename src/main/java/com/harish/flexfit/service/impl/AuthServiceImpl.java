@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.harish.flexfit.dto.request.LoginRequest;
-import com.harish.flexfit.dto.request.RefreshTokenRequest;
 import com.harish.flexfit.dto.response.AuthResponse;
 import com.harish.flexfit.dto.response.UserProfileResponse;
 import com.harish.flexfit.entity.User;
@@ -67,10 +66,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse refreshToken(RefreshTokenRequest request) {
+    public AuthResponse refreshToken(String refreshToken) {
         log.info("Refresh token request received");
-
-        String refreshToken = request.getRefreshToken();
 
         if (!jwtUtil.validateToken(refreshToken)) {
             log.warn("Invalid refresh token");
