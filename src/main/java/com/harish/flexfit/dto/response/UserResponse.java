@@ -11,4 +11,5 @@ public class UserResponse {
     private UUID id;
     private String email;
     private String role;
+    private boolean isProfileComplete;
 }

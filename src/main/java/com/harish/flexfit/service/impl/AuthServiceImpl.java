@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import com.harish.flexfit.dto.request.LoginRequest;
 import com.harish.flexfit.dto.request.RefreshTokenRequest;
 import com.harish.flexfit.dto.response.AuthResponse;
+import com.harish.flexfit.dto.response.UserProfileResponse;
 import com.harish.flexfit.entity.User;
 import com.harish.flexfit.exception.BadRequestException;
 import com.harish.flexfit.repo.UserRepository;
 import com.harish.flexfit.security.JwtUtil;
 import com.harish.flexfit.service.AuthService;
+import com.harish.flexfit.service.UserProfileService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +30,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserProfileService userProfileService;
 
     @Override
     public AuthResponse login(LoginRequest request) {
@@ -54,7 +59,11 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtil.generateAccessToken(user);
         String refreshToken = jwtUtil.generateRefreshToken(user);
         
-        return new AuthResponse(user.getEmail(), accessToken, refreshToken, user.getRole().name());
+        UserProfileResponse userProfile = user.isProfileComplete() 
+            ? userProfileService.getProfile(user.getId()) 
+            : null;
+        
+        return new AuthResponse(user.getEmail(), accessToken, refreshToken, user.getRole().name(), user.isProfileComplete(), userProfile);
     }
 
     @Override
@@ -90,7 +99,11 @@ public class AuthServiceImpl implements AuthService {
         String newAccessToken = jwtUtil.generateAccessToken(user);
         String newRefreshToken = jwtUtil.generateRefreshToken(user);
 
-        return new AuthResponse(user.getEmail(), newAccessToken, newRefreshToken, user.getRole().name());
+        UserProfileResponse userProfile = user.isProfileComplete() 
+            ? userProfileService.getProfile(user.getId()) 
+            : null;
+
+        return new AuthResponse(user.getEmail(), newAccessToken, newRefreshToken, user.getRole().name(), user.isProfileComplete(), userProfile);
     }
 
     @Override
@@ -100,6 +113,6 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtil.generateAccessToken(user);
         String refreshToken = jwtUtil.generateRefreshToken(user);
 
-        return new AuthResponse(user.getEmail(), accessToken, refreshToken, user.getRole().name());
+        return new AuthResponse(user.getEmail(), accessToken, refreshToken, user.getRole().name(), user.isProfileComplete(), null);
     }
 }

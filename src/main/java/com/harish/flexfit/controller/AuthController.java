@@ -54,7 +54,12 @@ public class AuthController {
         log.info("Signup request received for email: {}", request.getEmail());
 
         User user = userService.registerUser(request);
-        UserResponse userResponse = new UserResponse(user.getId(), user.getEmail(), user.getRole().name());
+        UserResponse userResponse = new UserResponse(
+            user.getId(), 
+            user.getEmail(), 
+            user.getRole().name(),
+            user.isProfileComplete()
+        );
         
         log.info("User registered successfully with email: {}", request.getEmail());
 
@@ -117,7 +122,9 @@ public class AuthController {
             authResponse.getEmail(),
             null,
             null,
-            authResponse.getRole()
+            authResponse.getRole(),
+            authResponse.isProfileComplete(),
+            authResponse.getUserProfile()
         );
 
         return ResponseEntity.ok(
@@ -158,11 +165,34 @@ public class AuthController {
             authResponse.getEmail(),
             null,
             null,
-            authResponse.getRole()
+            authResponse.getRole(),
+            authResponse.isProfileComplete(),
+            authResponse.getUserProfile()
         );
 
         return ResponseEntity.ok(
             ApiResponse.success("Token refreshed successfully", responseWithoutTokens)
         );
     }
+
+    @PostMapping("/logout")
+public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
+    // Clear access token cookie
+    Cookie accessTokenCookie = new Cookie(accessTokenCookieName, null);
+    accessTokenCookie.setHttpOnly(true);
+    accessTokenCookie.setSecure(true);
+    accessTokenCookie.setPath("/");
+    accessTokenCookie.setMaxAge(0);
+    response.addCookie(accessTokenCookie);
+
+    // Clear refresh token cookie
+    Cookie refreshTokenCookie = new Cookie(refreshTokenCookieName, null);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setSecure(true);
+    refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setMaxAge(0);
+    response.addCookie(refreshTokenCookie);
+
+    return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
+}
 }
