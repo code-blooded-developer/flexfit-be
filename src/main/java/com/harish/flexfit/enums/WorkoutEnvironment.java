@@ -2,5 +2,6 @@ package com.harish.flexfit.enums;
 
 public enum WorkoutEnvironment {
     GYM,
-    HOME
+    HOME,
+    SOCIETY_GYM,
 }

@@ -51,7 +51,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         double weightInKg = UnitConversionUtil.convertWeightToKg(request.getWeight(), request.getWeightUnit());
 
-        profile.setName(request.getName());
         profile.setGender(request.getGender());
         profile.setDateOfBirth(request.getDateOfBirth());
 
