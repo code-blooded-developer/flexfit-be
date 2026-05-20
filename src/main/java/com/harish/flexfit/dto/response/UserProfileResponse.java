@@ -31,4 +31,6 @@ public class UserProfileResponse {
     private WorkoutEnvironment workoutEnvironment;
 
     private List<EquipmentResponse> equipments;
+
+    private boolean isProfileComplete;
 }

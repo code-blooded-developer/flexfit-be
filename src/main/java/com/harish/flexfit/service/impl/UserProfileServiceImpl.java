@@ -89,20 +89,23 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         log.info("Profile saved for userId={}", userId);
 
-        return map(saved);
+        return map(saved, user.isProfileComplete());
     }
 
     @Override
     public UserProfileResponse getProfile(UUID userId) {
         log.info("Fetching profile for userId={}", userId);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
         UserProfile profile = userProfileRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new BadRequestException("Profile not found"));
 
-        return map(profile);
+        return map(profile, user.isProfileComplete());
     }
 
-    private UserProfileResponse map(UserProfile profile) {
+    private UserProfileResponse map(UserProfile profile, boolean isProfileComplete) {
         return UserProfileResponse.builder()
                 .userId(profile.getUser().getId())
                 .name(profile.getName())
@@ -115,6 +118,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .workoutDaysPerWeek(profile.getWorkoutDaysPerWeek())
                 .workoutDurationMinutes(profile.getWorkoutDurationMinutes())
                 .workoutEnvironment(profile.getWorkoutEnvironment())
+                .isProfileComplete(isProfileComplete)
                 .build();
     }
 }
