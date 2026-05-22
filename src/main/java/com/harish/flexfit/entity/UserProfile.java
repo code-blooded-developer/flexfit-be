@@ -15,6 +15,7 @@ import com.harish.flexfit.enums.HeightUnit;
 import com.harish.flexfit.enums.WeightUnit;
 import com.harish.flexfit.enums.WorkoutEnvironment;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,8 +25,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -88,13 +88,8 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     private WorkoutEnvironment workoutEnvironment;
 
-    @ManyToMany
-    @JoinTable(
-        name = "user_equipment",
-        joinColumns = @JoinColumn(name = "user_profile_id"),
-        inverseJoinColumns = @JoinColumn(name = "equipment_id")
-    )
-    private List<Equipment> equipments;
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserEquipment> userEquipments;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

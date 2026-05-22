@@ -12,6 +12,7 @@ import com.harish.flexfit.enums.WeightUnit;
 import com.harish.flexfit.enums.WorkoutEnvironment;
 import com.harish.flexfit.validator.annotation.ValidUserProfile;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -62,5 +63,21 @@ public class UserProfileRequest {
     @NotNull(message = "Workout environment is required")
     private WorkoutEnvironment workoutEnvironment;
 
-    private List<UUID> equipmentIds;
+    @Valid
+    private List<EquipmentSelection> equipmentSelections;
+
+    @Data
+    public static class EquipmentSelection {
+        @NotNull
+        private UUID equipmentId;
+        private List<VariantSelection> variantSelections;
+    }
+
+    @Data
+    public static class VariantSelection {
+        @NotNull
+        private UUID variantId;
+        @Min(1)
+        private int quantity = 1;
+    }
 }

@@ -1,7 +1,6 @@
 package com.harish.flexfit.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +16,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -44,8 +42,8 @@ public class Equipment {
     @Enumerated(EnumType.STRING)
     private EquipmentCategory category;
 
-    @ManyToMany(mappedBy = "equipments")
-    private List<UserProfile> userProfiles;
+    @Column(nullable = false)
+    private boolean hasVariants;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

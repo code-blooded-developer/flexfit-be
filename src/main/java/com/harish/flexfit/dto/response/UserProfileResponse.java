@@ -30,7 +30,7 @@ public class UserProfileResponse {
     private Integer workoutDurationMinutes;
     private WorkoutEnvironment workoutEnvironment;
 
-    private List<EquipmentResponse> equipments;
+    private List<UserEquipmentResponse> equipments;
 
     private boolean isProfileComplete;
 }
