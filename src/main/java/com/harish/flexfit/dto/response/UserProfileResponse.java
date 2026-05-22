@@ -1,7 +1,6 @@
 package com.harish.flexfit.dto.response;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 import com.harish.flexfit.enums.ExperienceLevel;
@@ -29,8 +28,6 @@ public class UserProfileResponse {
     private Integer workoutDaysPerWeek;
     private Integer workoutDurationMinutes;
     private WorkoutEnvironment workoutEnvironment;
-
-    private List<UserEquipmentResponse> equipments;
 
     private boolean isProfileComplete;
 }

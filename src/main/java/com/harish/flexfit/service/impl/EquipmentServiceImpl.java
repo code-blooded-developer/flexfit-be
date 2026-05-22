@@ -1,5 +1,6 @@
 package com.harish.flexfit.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.harish.flexfit.dto.request.EquipmentSelectionRequest;
+import com.harish.flexfit.dto.request.EquipmentSelectionRequest.EquipmentSelection;
+import com.harish.flexfit.dto.request.EquipmentSelectionRequest.VariantSelection;
 import com.harish.flexfit.dto.response.EquipmentSelectionResponse;
 import com.harish.flexfit.dto.response.EquipmentVariantResponse;
 import com.harish.flexfit.entity.Equipment;
@@ -17,6 +22,7 @@ import com.harish.flexfit.entity.UserEquipment;
 import com.harish.flexfit.entity.UserProfile;
 import com.harish.flexfit.enums.EquipmentType;
 import com.harish.flexfit.enums.WorkoutEnvironment;
+import com.harish.flexfit.exception.BadRequestException;
 import com.harish.flexfit.repo.EquipmentRepository;
 import com.harish.flexfit.repo.EquipmentVariantRepository;
 import com.harish.flexfit.repo.UserProfileRepository;
@@ -101,6 +107,77 @@ public class EquipmentServiceImpl implements EquipmentService {
                             .build();
                 })
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void saveEquipmentSelections(UUID userId, EquipmentSelectionRequest request) {
+        log.info("Saving equipment selections for userId={}", userId);
+
+        UserProfile profile = userProfileRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("Profile not found. Complete profile first."));
+
+        List<EquipmentSelection> selections = request.getEquipmentSelections();
+        if (selections == null) {
+            profile.getUserEquipments().clear();
+            userProfileRepository.save(profile);
+            return;
+        }
+
+        List<UUID> equipmentIds = selections.stream()
+                .map(EquipmentSelection::getEquipmentId)
+                .toList();
+        List<Equipment> equipments = equipmentRepository.findAllById(equipmentIds);
+        Map<UUID, Equipment> equipmentMap = equipments.stream()
+                .collect(Collectors.toMap(Equipment::getId, e -> e));
+
+        List<UUID> allVariantIds = selections.stream()
+                .filter(s -> s.getVariantSelections() != null)
+                .flatMap(s -> s.getVariantSelections().stream())
+                .map(VariantSelection::getVariantId)
+                .toList();
+        Map<UUID, EquipmentVariant> variantMap = !allVariantIds.isEmpty()
+                ? equipmentVariantRepository.findAllById(allVariantIds).stream()
+                        .collect(Collectors.toMap(EquipmentVariant::getId, v -> v))
+                : Collections.emptyMap();
+
+        List<UserEquipment> userEquipments = new ArrayList<>();
+
+        for (EquipmentSelection selection : selections) {
+            Equipment equipment = equipmentMap.get(selection.getEquipmentId());
+            if (equipment == null) {
+                log.warn("Equipment {} not found, skipping", selection.getEquipmentId());
+                continue;
+            }
+
+            if (selection.getVariantSelections() != null && !selection.getVariantSelections().isEmpty()) {
+                for (VariantSelection vs : selection.getVariantSelections()) {
+                    EquipmentVariant variant = variantMap.get(vs.getVariantId());
+                    if (variant == null) {
+                        log.warn("Variant {} not found, skipping", vs.getVariantId());
+                        continue;
+                    }
+                    UserEquipment ue = new UserEquipment();
+                    ue.setUserProfile(profile);
+                    ue.setEquipment(equipment);
+                    ue.setVariant(variant);
+                    ue.setQuantity(vs.getQuantity());
+                    userEquipments.add(ue);
+                }
+            } else {
+                UserEquipment ue = new UserEquipment();
+                ue.setUserProfile(profile);
+                ue.setEquipment(equipment);
+                ue.setQuantity(1);
+                userEquipments.add(ue);
+            }
+        }
+
+        profile.getUserEquipments().clear();
+        profile.getUserEquipments().addAll(userEquipments);
+        userProfileRepository.save(profile);
+
+        log.info("Equipment selections saved for userId={}", userId);
     }
 
     private boolean isDefaultForEnvironment(Equipment eq, WorkoutEnvironment env) {
