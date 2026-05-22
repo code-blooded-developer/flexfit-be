@@ -45,6 +45,8 @@ public class Equipment {
     @Column(nullable = false)
     private boolean hasVariants;
 
+    private String imageUrl;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

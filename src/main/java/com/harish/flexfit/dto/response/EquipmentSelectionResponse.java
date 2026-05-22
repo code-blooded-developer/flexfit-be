@@ -17,6 +17,7 @@ public class EquipmentSelectionResponse {
     private EquipmentType type;
     private EquipmentCategory category;
     private boolean hasVariants;
+    private String imageUrl;
     private List<EquipmentVariantResponse> variants;
     private boolean selected;
     private List<UUID> selectedVariantIds;

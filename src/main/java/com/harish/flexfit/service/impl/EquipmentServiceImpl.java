@@ -107,6 +107,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         equipment.setType(request.getType());
         equipment.setCategory(request.getCategory());
         equipment.setHasVariants(request.isHasVariants());
+        equipment.setImageUrl(request.getImageUrl());
 
         Equipment saved = equipmentRepository.save(equipment);
         log.info("Equipment created with id={}", saved.getId());
@@ -128,6 +129,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         equipment.setType(request.getType());
         equipment.setCategory(request.getCategory());
         equipment.setHasVariants(request.isHasVariants());
+        equipment.setImageUrl(request.getImageUrl());
 
         Equipment saved = equipmentRepository.save(equipment);
         log.info("Equipment updated with id={}", saved.getId());
@@ -316,6 +318,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .type(eq.getType())
                 .category(eq.getCategory())
                 .hasVariants(eq.isHasVariants())
+                .imageUrl(eq.getImageUrl())
                 .variants(variantResponses)
                 .build();
     }
@@ -336,6 +339,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .type(eq.getType())
                 .category(eq.getCategory())
                 .hasVariants(eq.isHasVariants())
+                .imageUrl(eq.getImageUrl())
                 .variants(variantResponses)
                 .selected(selected)
                 .selectedVariantIds(selectedVariantIds)
