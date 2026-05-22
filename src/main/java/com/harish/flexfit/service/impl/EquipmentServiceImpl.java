@@ -26,7 +26,6 @@ import com.harish.flexfit.entity.UserEquipment;
 import com.harish.flexfit.entity.UserProfile;
 import com.harish.flexfit.enums.EquipmentType;
 import com.harish.flexfit.enums.WorkoutEnvironment;
-import com.harish.flexfit.exception.BadRequestException;
 import com.harish.flexfit.exception.ConflictException;
 import com.harish.flexfit.exception.ResourceNotFoundException;
 import com.harish.flexfit.repo.EquipmentRepository;
