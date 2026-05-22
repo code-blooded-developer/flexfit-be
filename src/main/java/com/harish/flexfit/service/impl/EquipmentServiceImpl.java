@@ -11,11 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.harish.flexfit.dto.request.EquipmentRequest;
 import com.harish.flexfit.dto.request.EquipmentSelectionRequest;
 import com.harish.flexfit.dto.request.EquipmentSelectionRequest.EquipmentSelection;
 import com.harish.flexfit.dto.request.EquipmentSelectionRequest.VariantSelection;
+import com.harish.flexfit.dto.response.EquipmentResponse;
 import com.harish.flexfit.dto.response.EquipmentSelectionResponse;
 import com.harish.flexfit.dto.response.EquipmentVariantResponse;
+import com.harish.flexfit.dto.response.UserEquipmentResponse;
+import com.harish.flexfit.dto.response.UserEquipmentResponse.SelectedVariant;
 import com.harish.flexfit.entity.Equipment;
 import com.harish.flexfit.entity.EquipmentVariant;
 import com.harish.flexfit.entity.UserEquipment;
@@ -23,6 +27,8 @@ import com.harish.flexfit.entity.UserProfile;
 import com.harish.flexfit.enums.EquipmentType;
 import com.harish.flexfit.enums.WorkoutEnvironment;
 import com.harish.flexfit.exception.BadRequestException;
+import com.harish.flexfit.exception.ConflictException;
+import com.harish.flexfit.exception.ResourceNotFoundException;
 import com.harish.flexfit.repo.EquipmentRepository;
 import com.harish.flexfit.repo.EquipmentVariantRepository;
 import com.harish.flexfit.repo.UserProfileRepository;
@@ -44,66 +50,143 @@ public class EquipmentServiceImpl implements EquipmentService {
     private UserProfileRepository userProfileRepository;
 
     @Override
-    public List<EquipmentSelectionResponse> getEquipmentForEnvironment(WorkoutEnvironment environment, UUID userId) {
-        log.info("Fetching equipment for environment={}, userId={}", environment, userId);
-
-        UserProfile profile = userProfileRepository.findByUser_Id(userId).orElse(null);
+    public List<EquipmentResponse> getEquipments() {
+        log.info("Fetching all equipment");
 
         List<Equipment> allEquipment = equipmentRepository.findAll();
-
         List<EquipmentVariant> allVariants = equipmentVariantRepository.findAll();
         Map<UUID, List<EquipmentVariant>> variantsByEquipment = allVariants.stream()
                 .collect(Collectors.groupingBy(v -> v.getEquipment().getId()));
 
-        List<UUID> userEquipmentIds = Collections.emptyList();
-        Map<UUID, List<UUID>> userVariantIdsByEquipment = Collections.emptyMap();
+        return allEquipment.stream()
+                .map(eq -> mapToResponse(eq, variantsByEquipment.getOrDefault(eq.getId(), List.of())))
+                .toList();
+    }
 
-        if (profile != null && profile.getUserEquipments() != null) {
-            List<UserEquipment> userEquipments = profile.getUserEquipments();
-            userEquipmentIds = userEquipments.stream()
-                    .map(ue -> ue.getEquipment().getId())
-                    .distinct()
-                    .toList();
-            userVariantIdsByEquipment = userEquipments.stream()
-                    .filter(ue -> ue.getVariant() != null)
-                    .collect(Collectors.groupingBy(
-                            ue -> ue.getEquipment().getId(),
-                            Collectors.mapping(ue -> ue.getVariant().getId(), Collectors.toList())
-                    ));
-        }
+    @Override
+    public List<EquipmentSelectionResponse> getEquipmentsByEnvironment(WorkoutEnvironment environment) {
+        log.info("Fetching equipment for environment={}", environment);
 
-        Map<UUID, List<UUID>> finalUserVariantIdsByEquipment = userVariantIdsByEquipment;
-        List<UUID> finalUserEquipmentIds = userEquipmentIds;
+        List<Equipment> allEquipment = equipmentRepository.findAll();
+        List<EquipmentVariant> allVariants = equipmentVariantRepository.findAll();
+        Map<UUID, List<EquipmentVariant>> variantsByEquipment = allVariants.stream()
+                .collect(Collectors.groupingBy(v -> v.getEquipment().getId()));
 
         return allEquipment.stream()
                 .map(eq -> {
-                    boolean selected = !finalUserEquipmentIds.isEmpty()
-                            ? finalUserEquipmentIds.contains(eq.getId())
-                            : isDefaultForEnvironment(eq, environment);
-
+                    boolean selected = isDefaultForEnvironment(eq, environment);
                     List<EquipmentVariant> variants = variantsByEquipment.getOrDefault(eq.getId(), List.of());
-                    List<EquipmentVariantResponse> variantResponses = variants.stream()
-                            .map(v -> EquipmentVariantResponse.builder()
-                                    .id(v.getId())
-                                    .weight(v.getWeight())
-                                    .weightUnit(v.getWeightUnit())
+                    return mapToSelectionResponse(eq, variants, selected,
+                            selected ? variants.stream().map(EquipmentVariant::getId).toList() : List.of());
+                })
+                .toList();
+    }
+
+    @Override
+    public EquipmentResponse getEquipmentById(UUID id) {
+        log.info("Fetching equipment with id={}", id);
+
+        Equipment equipment = equipmentRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Equipment with id={} not found", id);
+                    return new ResourceNotFoundException("Equipment not found");
+                });
+
+        List<EquipmentVariant> variants = equipmentVariantRepository
+                .findByEquipmentIdOrderBySortOrder(id);
+
+        return mapToResponse(equipment, variants);
+    }
+
+    @Override
+    @Transactional
+    public Equipment createEquipment(EquipmentRequest request) {
+        log.info("Creating equipment: name={}", request.getName());
+
+        Equipment equipment = new Equipment();
+        equipment.setName(request.getName());
+        equipment.setType(request.getType());
+        equipment.setCategory(request.getCategory());
+        equipment.setHasVariants(request.isHasVariants());
+
+        Equipment saved = equipmentRepository.save(equipment);
+        log.info("Equipment created with id={}", saved.getId());
+        return saved;
+    }
+
+    @Override
+    @Transactional
+    public Equipment updateEquipment(UUID id, EquipmentRequest request) {
+        log.info("Updating equipment with id={}", id);
+
+        Equipment equipment = equipmentRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Equipment with id={} not found", id);
+                    return new ResourceNotFoundException("Equipment not found");
+                });
+
+        equipment.setName(request.getName());
+        equipment.setType(request.getType());
+        equipment.setCategory(request.getCategory());
+        equipment.setHasVariants(request.isHasVariants());
+
+        Equipment saved = equipmentRepository.save(equipment);
+        log.info("Equipment updated with id={}", saved.getId());
+        return saved;
+    }
+
+    @Override
+    @Transactional
+    public void deleteEquipment(UUID id) {
+        log.info("Deleting equipment with id={}", id);
+
+        Equipment equipment = equipmentRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Equipment with id={} not found", id);
+                    return new ResourceNotFoundException("Equipment not found");
+                });
+
+        equipmentRepository.delete(equipment);
+        log.info("Equipment deleted with id={}", id);
+    }
+
+    @Override
+    public List<UserEquipmentResponse> getUserEquipments(UUID userId) {
+        log.info("Fetching user equipment for userId={}", userId);
+
+        UserProfile profile = userProfileRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+
+        if (profile.getUserEquipments() == null || profile.getUserEquipments().isEmpty()) {
+            return List.of();
+        }
+
+        Map<UUID, List<UserEquipment>> byEquipment = profile.getUserEquipments().stream()
+                .collect(Collectors.groupingBy(ue -> ue.getEquipment().getId()));
+
+        return byEquipment.entrySet().stream()
+                .map(entry -> {
+                    List<UserEquipment> ueList = entry.getValue();
+                    UserEquipment first = ueList.get(0);
+                    Equipment eq = first.getEquipment();
+
+                    List<SelectedVariant> variants = ueList.stream()
+                            .filter(ue -> ue.getVariant() != null)
+                            .map(ue -> SelectedVariant.builder()
+                                    .variantId(ue.getVariant().getId())
+                                    .weight(ue.getVariant().getWeight())
+                                    .weightUnit(ue.getVariant().getWeightUnit())
+                                    .quantity(ue.getQuantity())
                                     .build())
                             .toList();
 
-                    List<UUID> selectedVariantIds = selected
-                            ? finalUserVariantIdsByEquipment.getOrDefault(eq.getId(),
-                                    variants.stream().map(EquipmentVariant::getId).toList())
-                            : List.of();
-
-                    return EquipmentSelectionResponse.builder()
+                    return UserEquipmentResponse.builder()
                             .id(eq.getId())
                             .name(eq.getName())
                             .type(eq.getType())
                             .category(eq.getCategory())
                             .hasVariants(eq.isHasVariants())
-                            .variants(variantResponses)
-                            .selected(selected)
-                            .selectedVariantIds(selectedVariantIds)
+                            .variants(variants)
                             .build();
                 })
                 .toList();
@@ -111,12 +194,53 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     @Transactional
-    public void saveEquipmentSelections(UUID userId, EquipmentSelectionRequest request) {
+    public void saveUserEquipments(UUID userId, EquipmentSelectionRequest request) {
         log.info("Saving equipment selections for userId={}", userId);
 
         UserProfile profile = userProfileRepository.findByUser_Id(userId)
-                .orElseThrow(() -> new BadRequestException("Profile not found. Complete profile first."));
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found. Complete profile first."));
 
+        if (profile.getUserEquipments() != null && !profile.getUserEquipments().isEmpty()) {
+            throw new ConflictException("Equipment selections already exist. Use PUT to update.");
+        }
+
+        replaceUserEquipment(profile, request);
+        log.info("Equipment selections saved for userId={}", userId);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserEquipments(UUID userId, EquipmentSelectionRequest request) {
+        log.info("Updating equipment selections for userId={}", userId);
+
+        UserProfile profile = userProfileRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found. Complete profile first."));
+
+        if (profile.getUserEquipments() == null || profile.getUserEquipments().isEmpty()) {
+            throw new ResourceNotFoundException("No equipment selections found to update. Use POST to create.");
+        }
+
+        replaceUserEquipment(profile, request);
+        log.info("Equipment selections updated for userId={}", userId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserEquipments(UUID userId) {
+        log.info("Deleting user equipment for userId={}", userId);
+
+        UserProfile profile = userProfileRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+
+        if (profile.getUserEquipments() != null) {
+            profile.getUserEquipments().clear();
+            userProfileRepository.save(profile);
+        }
+
+        log.info("User equipment deleted for userId={}", userId);
+    }
+
+    private void replaceUserEquipment(UserProfile profile, EquipmentSelectionRequest request) {
         List<EquipmentSelection> selections = request.getEquipmentSelections();
         if (selections == null) {
             profile.getUserEquipments().clear();
@@ -176,8 +300,47 @@ public class EquipmentServiceImpl implements EquipmentService {
         profile.getUserEquipments().clear();
         profile.getUserEquipments().addAll(userEquipments);
         userProfileRepository.save(profile);
+    }
 
-        log.info("Equipment selections saved for userId={}", userId);
+    private EquipmentResponse mapToResponse(Equipment eq, List<EquipmentVariant> variants) {
+        List<EquipmentVariantResponse> variantResponses = variants.stream()
+                .map(v -> EquipmentVariantResponse.builder()
+                        .id(v.getId())
+                        .weight(v.getWeight())
+                        .weightUnit(v.getWeightUnit())
+                        .build())
+                .toList();
+
+        return EquipmentResponse.builder()
+                .id(eq.getId())
+                .name(eq.getName())
+                .type(eq.getType())
+                .category(eq.getCategory())
+                .hasVariants(eq.isHasVariants())
+                .variants(variantResponses)
+                .build();
+    }
+
+    private EquipmentSelectionResponse mapToSelectionResponse(Equipment eq, List<EquipmentVariant> variants,
+            boolean selected, List<UUID> selectedVariantIds) {
+        List<EquipmentVariantResponse> variantResponses = variants.stream()
+                .map(v -> EquipmentVariantResponse.builder()
+                        .id(v.getId())
+                        .weight(v.getWeight())
+                        .weightUnit(v.getWeightUnit())
+                        .build())
+                .toList();
+
+        return EquipmentSelectionResponse.builder()
+                .id(eq.getId())
+                .name(eq.getName())
+                .type(eq.getType())
+                .category(eq.getCategory())
+                .hasVariants(eq.isHasVariants())
+                .variants(variantResponses)
+                .selected(selected)
+                .selectedVariantIds(selectedVariantIds)
+                .build();
     }
 
     private boolean isDefaultForEnvironment(Equipment eq, WorkoutEnvironment env) {
