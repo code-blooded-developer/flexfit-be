@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.harish.flexfit.enums.EquipmentCategory;
 import com.harish.flexfit.enums.EquipmentType;
 
 import jakarta.persistence.Column;
@@ -39,6 +40,9 @@ public class Equipment {
 
     @Enumerated(EnumType.STRING)
     private EquipmentType type;
+
+    @Enumerated(EnumType.STRING)
+    private EquipmentCategory category;
 
     @ManyToMany(mappedBy = "equipments")
     private List<UserProfile> userProfiles;

@@ -48,7 +48,7 @@ public class ExerciseSeeder implements CommandLineRunner {
                 // 🔥 CHEST
                 create("Push Up", MuscleGroup.CHEST, DifficultyLevel.BEGINNER,
                         ExerciseType.COMPOUND, ExerciseCategory.MAIN,
-                        List.of("Bodyweight")),
+                        List.of()),
 
                 create("Bench Press", MuscleGroup.CHEST, DifficultyLevel.INTERMEDIATE,
                         ExerciseType.COMPOUND, ExerciseCategory.MAIN,
@@ -70,25 +70,25 @@ public class ExerciseSeeder implements CommandLineRunner {
 
                 create("Lunges", MuscleGroup.LEGS, DifficultyLevel.BEGINNER,
                         ExerciseType.COMPOUND, ExerciseCategory.MAIN,
-                        List.of("Bodyweight")),
+                        List.of()),
 
                 // 🔥 WARMUP
                 create("Jumping Jacks", MuscleGroup.FULL_BODY, DifficultyLevel.BEGINNER,
                         ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
-                        List.of("Bodyweight")),
+                        List.of()),
 
                 create("Arm Circles", MuscleGroup.SHOULDERS, DifficultyLevel.BEGINNER,
                         ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
-                        List.of("Bodyweight")),
+                        List.of()),
 
                 // 🔥 STRETCHING
                 create("Chest Stretch", MuscleGroup.CHEST, DifficultyLevel.BEGINNER,
                         ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
-                        List.of("Bodyweight")),
+                        List.of()),
 
                 create("Hamstring Stretch", MuscleGroup.HAMSTRINGS, DifficultyLevel.BEGINNER,
                         ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
-                        List.of("Bodyweight"))
+                        List.of())
         );
 
         // Attach equipment

@@ -2,6 +2,9 @@ package com.harish.flexfit.dto.response;
 
 import java.util.UUID;
 
+import com.harish.flexfit.enums.EquipmentCategory;
+import com.harish.flexfit.enums.EquipmentType;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,4 +13,6 @@ import lombok.Data;
 public class EquipmentResponse {
     private UUID id;
     private String name;
+    private EquipmentType type;
+    private EquipmentCategory category;
 }
