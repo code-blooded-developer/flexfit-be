@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.harish.flexfit.dto.request.EquipmentRequest;
@@ -44,7 +45,7 @@ public class EquipmentController {
 
     @GetMapping(params = "environment")
     public ResponseEntity<ApiResponse<List<EquipmentSelectionResponse>>> getEquipmentsByEnvironment(
-            @PathVariable WorkoutEnvironment environment) {
+            @RequestParam WorkoutEnvironment environment) {
         log.info("Fetching equipment for environment: {}", environment);
 
         List<EquipmentSelectionResponse> equipment = equipmentService.getEquipmentsByEnvironment(environment);
