@@ -19,6 +19,4 @@ public class EquipmentRequest {
     private EquipmentCategory category;
 
     private boolean hasVariants;
-
-    private String imageUrl;
 }

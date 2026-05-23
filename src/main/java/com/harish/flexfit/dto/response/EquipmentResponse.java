@@ -17,6 +17,5 @@ public class EquipmentResponse {
     private EquipmentType type;
     private EquipmentCategory category;
     private boolean hasVariants;
-    private String imageUrl;
     private List<EquipmentVariantResponse> variants;
 }
