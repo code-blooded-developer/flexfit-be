@@ -19,14 +19,14 @@ public class GlobalExceptionHandler {
          String errorMessage = ex.getBindingResult()
             .getFieldErrors()
             .stream()
-            .map(err -> err.getField() + ": " + err.getDefaultMessage())
+            .map(err -> err.getDefaultMessage())
             .findFirst()
             .orElse("Validation error");
         
         log.warn("Validation error: {}", errorMessage);
 
         return ResponseEntity.badRequest()
-                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), errorMessage));
     }
 
     @ExceptionHandler(BadRequestException.class)
