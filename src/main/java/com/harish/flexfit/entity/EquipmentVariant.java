@@ -44,4 +44,7 @@ public class EquipmentVariant {
 
     @Column(name = "sort_order")
     private Integer sortOrder;
+
+    @Column(nullable = false)
+    private Integer quantity = 1;
 }

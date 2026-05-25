@@ -13,4 +13,5 @@ public class EquipmentVariantResponse {
     private UUID id;
     private Double weight;
     private WeightUnit weightUnit;
+    private int quantity;
 }

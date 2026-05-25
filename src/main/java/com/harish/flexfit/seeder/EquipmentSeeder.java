@@ -152,7 +152,7 @@ public class EquipmentSeeder implements CommandLineRunner {
         Equipment dumbbell = byName.get("Dumbbell");
         int order = 1;
         for (double w : new double[]{2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25}) {
-            variants.add(createVariant(dumbbell, w, WeightUnit.KG, order++));
+            variants.add(createVariant(dumbbell, w, WeightUnit.KG, order++, 2));
         }
 
         // Kettlebell variants (kg)
@@ -181,7 +181,7 @@ public class EquipmentSeeder implements CommandLineRunner {
         Equipment weightPlate = byName.get("Weight Plate");
         order = 1;
         for (double w : new double[]{1.25, 2.5, 5, 10, 15, 20, 25}) {
-            variants.add(createVariant(weightPlate, w, WeightUnit.KG, order++));
+            variants.add(createVariant(weightPlate, w, WeightUnit.KG, order++, 2));
         }
 
         // Medicine Ball variants (kg)
@@ -220,11 +220,16 @@ public class EquipmentSeeder implements CommandLineRunner {
     }
 
     private EquipmentVariant createVariant(Equipment equipment, double weight, WeightUnit unit, int sortOrder) {
+        return createVariant(equipment, weight, unit, sortOrder, 1);
+    }
+
+    private EquipmentVariant createVariant(Equipment equipment, double weight, WeightUnit unit, int sortOrder, int quantity) {
         EquipmentVariant variant = new EquipmentVariant();
         variant.setEquipment(equipment);
         variant.setWeight(weight);
         variant.setWeightUnit(unit);
         variant.setSortOrder(sortOrder);
+        variant.setQuantity(quantity);
         return variant;
     }
 }

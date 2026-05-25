@@ -307,6 +307,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                         .id(v.getId())
                         .weight(v.getWeight())
                         .weightUnit(v.getWeightUnit())
+                        .quantity(v.getQuantity())
                         .build())
                 .toList();
 
@@ -327,6 +328,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                         .id(v.getId())
                         .weight(v.getWeight())
                         .weightUnit(v.getWeightUnit())
+                        .quantity(v.getQuantity())
                         .build())
                 .toList();
 
