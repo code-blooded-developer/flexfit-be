@@ -23,6 +23,7 @@ import com.harish.flexfit.dto.response.UserEquipmentResponse.SelectedVariant;
 import com.harish.flexfit.entity.Equipment;
 import com.harish.flexfit.entity.EquipmentVariant;
 import com.harish.flexfit.entity.UserEquipment;
+import com.harish.flexfit.entity.UserEquipmentVariant;
 import com.harish.flexfit.entity.UserProfile;
 import com.harish.flexfit.enums.EquipmentType;
 import com.harish.flexfit.enums.WorkoutEnvironment;
@@ -170,12 +171,13 @@ public class EquipmentServiceImpl implements EquipmentService {
                     Equipment eq = first.getEquipment();
 
                     List<SelectedVariant> variants = ueList.stream()
-                            .filter(ue -> ue.getVariant() != null)
-                            .map(ue -> SelectedVariant.builder()
-                                    .variantId(ue.getVariant().getId())
-                                    .weight(ue.getVariant().getWeight())
-                                    .weightUnit(ue.getVariant().getWeightUnit())
-                                    .quantity(ue.getQuantity())
+                            .filter(ue -> ue.getUserEquipmentVariants() != null)
+                            .flatMap(ue -> ue.getUserEquipmentVariants().stream())
+                            .map(uev -> SelectedVariant.builder()
+                                    .variantId(uev.getVariant().getId())
+                                    .weight(uev.getVariant().getWeight())
+                                    .weightUnit(uev.getVariant().getWeightUnit())
+                                    .quantity(uev.getQuantity())
                                     .build())
                             .toList();
 
@@ -273,27 +275,28 @@ public class EquipmentServiceImpl implements EquipmentService {
                 continue;
             }
 
+            UserEquipment ue = new UserEquipment();
+            ue.setUserProfile(profile);
+            ue.setEquipment(equipment);
+
             if (selection.getVariantSelections() != null && !selection.getVariantSelections().isEmpty()) {
+                List<UserEquipmentVariant> uevs = new ArrayList<>();
                 for (VariantSelection vs : selection.getVariantSelections()) {
                     EquipmentVariant variant = variantMap.get(vs.getVariantId());
                     if (variant == null) {
                         log.warn("Variant {} not found, skipping", vs.getVariantId());
                         continue;
                     }
-                    UserEquipment ue = new UserEquipment();
-                    ue.setUserProfile(profile);
-                    ue.setEquipment(equipment);
-                    ue.setVariant(variant);
-                    ue.setQuantity(vs.getQuantity());
-                    userEquipments.add(ue);
+                    UserEquipmentVariant uev = new UserEquipmentVariant();
+                    uev.setUserEquipment(ue);
+                    uev.setVariant(variant);
+                    uev.setQuantity(vs.getQuantity());
+                    uevs.add(uev);
                 }
-            } else {
-                UserEquipment ue = new UserEquipment();
-                ue.setUserProfile(profile);
-                ue.setEquipment(equipment);
-                ue.setQuantity(1);
-                userEquipments.add(ue);
+                ue.setUserEquipmentVariants(uevs);
             }
+
+            userEquipments.add(ue);
         }
 
         profile.getUserEquipments().clear();
