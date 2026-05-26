@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.harish.flexfit.dto.request.EquipmentSelectionRequest;
 import com.harish.flexfit.dto.response.ApiResponse;
-import com.harish.flexfit.dto.response.UserEquipmentResponse;
+import com.harish.flexfit.dto.response.EquipmentSelectionResponse;
 import com.harish.flexfit.service.EquipmentService;
 
 import jakarta.validation.Valid;
@@ -31,11 +31,11 @@ public class UserEquipmentController {
     private EquipmentService equipmentService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserEquipmentResponse>>> getUserEquipments() {
+    public ResponseEntity<ApiResponse<List<EquipmentSelectionResponse>>> getUserEquipments() {
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Fetching user equipment for userId={}", userId);
 
-        List<UserEquipmentResponse> equipment = equipmentService.getUserEquipments(userId);
+        List<EquipmentSelectionResponse> equipment = equipmentService.getUserEquipments(userId);
 
         return ResponseEntity.ok(ApiResponse.success(equipment));
     }

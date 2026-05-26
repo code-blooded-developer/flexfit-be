@@ -7,7 +7,6 @@ import com.harish.flexfit.dto.request.EquipmentRequest;
 import com.harish.flexfit.dto.request.EquipmentSelectionRequest;
 import com.harish.flexfit.dto.response.EquipmentResponse;
 import com.harish.flexfit.dto.response.EquipmentSelectionResponse;
-import com.harish.flexfit.dto.response.UserEquipmentResponse;
 import com.harish.flexfit.entity.Equipment;
 import com.harish.flexfit.enums.WorkoutEnvironment;
 
@@ -19,7 +18,7 @@ public interface EquipmentService {
     Equipment updateEquipment(UUID id, EquipmentRequest request);
     void deleteEquipment(UUID id);
 
-    List<UserEquipmentResponse> getUserEquipments(UUID userId);
+    List<EquipmentSelectionResponse> getUserEquipments(UUID userId);
     void saveUserEquipments(UUID userId, EquipmentSelectionRequest request);
     void updateUserEquipments(UUID userId, EquipmentSelectionRequest request);
     void deleteUserEquipments(UUID userId);
