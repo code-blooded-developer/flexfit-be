@@ -75,7 +75,7 @@ public class AuthController {
         accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000));
-        accessTokenCookie.setAttribute("SameSite", "Lax");
+        accessTokenCookie.setAttribute("SameSite", "None");
         response.addCookie(accessTokenCookie);
 
         // Set refresh token cookie
@@ -84,7 +84,7 @@ public class AuthController {
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000));
-        refreshTokenCookie.setAttribute("SameSite", "Lax");
+        refreshTokenCookie.setAttribute("SameSite", "None");
         response.addCookie(refreshTokenCookie);
         
         return ResponseEntity.ok(
@@ -108,7 +108,7 @@ public class AuthController {
         accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000));
-        accessTokenCookie.setAttribute("SameSite", "Lax");
+        accessTokenCookie.setAttribute("SameSite", "None");
         response.addCookie(accessTokenCookie);
 
         // Set refresh token cookie
@@ -117,7 +117,7 @@ public class AuthController {
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000));
-        refreshTokenCookie.setAttribute("SameSite", "Lax");
+        refreshTokenCookie.setAttribute("SameSite", "None");
         response.addCookie(refreshTokenCookie);
 
         // Return response without tokens in body (tokens are in cookies)
@@ -164,7 +164,7 @@ public class AuthController {
         accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000));
-        accessTokenCookie.setAttribute("SameSite", "Lax");
+        accessTokenCookie.setAttribute("SameSite", "None");
         response.addCookie(accessTokenCookie);
 
         // Set refresh token cookie
@@ -173,7 +173,7 @@ public class AuthController {
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000));
-        refreshTokenCookie.setAttribute("SameSite", "Lax");
+        refreshTokenCookie.setAttribute("SameSite", "None");
         response.addCookie(refreshTokenCookie);
 
         // Return response without tokens in body
@@ -198,6 +198,7 @@ public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
     accessTokenCookie.setHttpOnly(true);
     accessTokenCookie.setSecure(true);
     accessTokenCookie.setPath("/");
+    accessTokenCookie.setAttribute("SameSite", "None");
     accessTokenCookie.setMaxAge(0);
     response.addCookie(accessTokenCookie);
 
@@ -206,6 +207,7 @@ public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
     refreshTokenCookie.setHttpOnly(true);
     refreshTokenCookie.setSecure(true);
     refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setAttribute("SameSite", "None");
     refreshTokenCookie.setMaxAge(0);
     response.addCookie(refreshTokenCookie);
 
