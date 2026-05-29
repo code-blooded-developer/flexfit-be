@@ -1192,34 +1192,6 @@ public class ExerciseSeeder implements CommandLineRunner {
     }
 
     private Exercise create(String name,
-                            MuscleGroup muscle,
-                            DifficultyLevel difficulty,
-                            ExerciseType type,
-                            ExerciseCategory category,
-                            List<String> equipmentNames) {
-
-        Exercise e = new Exercise();
-        e.setName(name);
-        e.setPrimaryMuscle(muscle);
-        e.setDifficultyLevel(difficulty);
-        e.setExerciseType(type);
-        e.setCategory(category);
-
-        // Temporary equipment objects (will map later)
-        List<Equipment> equipments = equipmentNames.stream()
-                .map(eqName -> {
-                    Equipment eq = new Equipment();
-                    eq.setName(eqName);
-                    return eq;
-                })
-                .toList();
-
-        e.setEquipments(equipments);
-
-        return e;
-    }
-
-    private Exercise create(String name,
                             MuscleGroup primary,
                             List<MuscleGroup> secondary,
                             DifficultyLevel difficulty,
