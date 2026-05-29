@@ -7,6 +7,7 @@ import com.harish.flexfit.enums.ExperienceLevel;
 import com.harish.flexfit.enums.FitnessGoal;
 import com.harish.flexfit.enums.Gender;
 import com.harish.flexfit.enums.WorkoutEnvironment;
+import com.harish.flexfit.enums.WorkoutSplit;
 
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,8 @@ public class UserProfileResponse {
     private Integer workoutDaysPerWeek;
     private Integer workoutDurationMinutes;
     private WorkoutEnvironment workoutEnvironment;
+
+    private WorkoutSplit workoutSplit;
 
     private boolean isProfileComplete;
 }

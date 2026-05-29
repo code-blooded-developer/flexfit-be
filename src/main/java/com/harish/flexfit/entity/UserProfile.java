@@ -14,6 +14,7 @@ import com.harish.flexfit.enums.Gender;
 import com.harish.flexfit.enums.HeightUnit;
 import com.harish.flexfit.enums.WeightUnit;
 import com.harish.flexfit.enums.WorkoutEnvironment;
+import com.harish.flexfit.enums.WorkoutSplit;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -28,6 +29,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -82,11 +85,17 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     private ExperienceLevel experienceLevel;
 
+    @Min(1)
+    @Max(7)
     private Integer workoutDaysPerWeek; 
+
     private Integer workoutDurationMinutes;
 
     @Enumerated(EnumType.STRING)
     private WorkoutEnvironment workoutEnvironment;
+
+    @Enumerated(EnumType.STRING)
+    private WorkoutSplit workoutSplit;
 
     @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserEquipment> userEquipments;

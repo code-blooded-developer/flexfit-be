@@ -64,6 +64,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         profile.setWorkoutDaysPerWeek(request.getWorkoutDaysPerWeek());
         profile.setWorkoutDurationMinutes(request.getWorkoutDurationMinutes());
         profile.setWorkoutEnvironment(request.getWorkoutEnvironment());
+        profile.setWorkoutSplit(request.getWorkoutSplit());
 
         UserProfile saved = userProfileRepository.save(profile);
 
@@ -110,6 +111,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .workoutDaysPerWeek(profile.getWorkoutDaysPerWeek())
                 .workoutDurationMinutes(profile.getWorkoutDurationMinutes())
                 .workoutEnvironment(profile.getWorkoutEnvironment())
+                .workoutSplit(profile.getWorkoutSplit())
                 .isProfileComplete(isProfileComplete)
                 .build();
     }

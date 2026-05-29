@@ -8,6 +8,7 @@ import com.harish.flexfit.enums.Gender;
 import com.harish.flexfit.enums.HeightUnit;
 import com.harish.flexfit.enums.WeightUnit;
 import com.harish.flexfit.enums.WorkoutEnvironment;
+import com.harish.flexfit.enums.WorkoutSplit;
 import com.harish.flexfit.validator.annotation.ValidUserProfile;
 
 import jakarta.validation.constraints.Max;
@@ -59,4 +60,6 @@ public class UserProfileRequest {
 
     @NotNull(message = "Workout environment is required")
     private WorkoutEnvironment workoutEnvironment;
+
+    private WorkoutSplit workoutSplit;
 }
