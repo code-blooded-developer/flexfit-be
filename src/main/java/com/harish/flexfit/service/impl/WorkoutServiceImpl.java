@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.harish.flexfit.dto.request.AddExerciseRequest;
 import com.harish.flexfit.dto.request.LogSetRequest;
-import com.harish.flexfit.dto.response.ExerciseAlternativeResponse;
+
 import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
 import com.harish.flexfit.dto.response.WorkoutResponse;
 import com.harish.flexfit.dto.response.WorkoutSetResponse;
@@ -201,7 +201,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ExerciseAlternativeResponse> getAlternativeExercises(
+    public List<WorkoutExerciseResponse> getAlternativeExercises(
             UUID userId, UUID workoutId, UUID exerciseId) {
         log.info("Getting alternatives for exercise id={} in workout id={}", exerciseId, workoutId);
         Workout workout = getOwnedWorkout(userId, workoutId);
@@ -226,13 +226,14 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .filter(e -> !recentExerciseIds.contains(e.getId()))
                 .filter(e -> !currentExerciseIds.contains(e.getId()))
                 .filter(e -> !e.getId().equals(we.getExercise().getId()))
-                .map(e -> ExerciseAlternativeResponse.builder()
+                .map(e -> WorkoutExerciseResponse.builder()
                         .exerciseId(e.getId())
                         .exerciseName(e.getName())
                         .primaryMuscle(e.getPrimaryMuscle())
                         .secondaryMuscles(e.getSecondaryMuscles())
                         .exerciseType(e.getExerciseType())
-                        .difficultyLevel(e.getDifficultyLevel())
+                        .phase(we.getPhase())
+                        .mediaUrl(e.getMediaUrl())
                         .build())
                 .toList();
     }

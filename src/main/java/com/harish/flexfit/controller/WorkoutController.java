@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.harish.flexfit.dto.request.AddExerciseRequest;
 import com.harish.flexfit.dto.request.LogSetRequest;
 import com.harish.flexfit.dto.response.ApiResponse;
-import com.harish.flexfit.dto.response.ExerciseAlternativeResponse;
+import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
 import com.harish.flexfit.dto.response.WorkoutResponse;
 import com.harish.flexfit.dto.response.WorkoutSetResponse;
 import com.harish.flexfit.service.WorkoutService;
@@ -99,13 +99,13 @@ public class WorkoutController {
     }
 
     @GetMapping("/{workoutId}/exercises/{exerciseId}/alternatives")
-    public ResponseEntity<ApiResponse<List<ExerciseAlternativeResponse>>> getAlternatives(
+    public ResponseEntity<ApiResponse<List<WorkoutExerciseResponse>>> getAlternatives(
             @PathVariable UUID workoutId,
             @PathVariable UUID exerciseId) {
         UUID userId = getCurrentUserId();
         log.info("Received alternatives request for workoutId={}, exerciseId={}",
                 workoutId, exerciseId);
-        List<ExerciseAlternativeResponse> alternatives =
+        List<WorkoutExerciseResponse> alternatives =
                 workoutService.getAlternativeExercises(userId, workoutId, exerciseId);
         return ResponseEntity.ok(ApiResponse.success(alternatives));
     }

@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.harish.flexfit.dto.request.AddExerciseRequest;
 import com.harish.flexfit.dto.request.LogSetRequest;
-import com.harish.flexfit.dto.response.ExerciseAlternativeResponse;
+import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
 import com.harish.flexfit.dto.response.WorkoutResponse;
 import com.harish.flexfit.dto.response.WorkoutSetResponse;
 
@@ -24,7 +24,7 @@ public interface WorkoutService {
 
     WorkoutResponse removeExercise(UUID userId, UUID workoutId, UUID exerciseId);
 
-    List<ExerciseAlternativeResponse> getAlternativeExercises(UUID userId, UUID workoutId, UUID exerciseId);
+    List<WorkoutExerciseResponse> getAlternativeExercises(UUID userId, UUID workoutId, UUID exerciseId);
 
     WorkoutResponse replaceExercise(UUID userId, UUID workoutId, UUID exerciseId, UUID alternativeExerciseId);
 
