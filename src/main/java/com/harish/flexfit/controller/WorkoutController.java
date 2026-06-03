@@ -13,14 +13,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.harish.flexfit.dto.request.AddExerciseRequest;
+import com.harish.flexfit.dto.request.AddExercisesRequest;
 import com.harish.flexfit.dto.request.LogSetRequest;
 import com.harish.flexfit.dto.response.ApiResponse;
 import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
 import com.harish.flexfit.dto.response.WorkoutResponse;
 import com.harish.flexfit.dto.response.WorkoutSetResponse;
+import com.harish.flexfit.enums.ExerciseCategory;
+import com.harish.flexfit.enums.MuscleGroup;
 import com.harish.flexfit.service.WorkoutService;
 
 import jakarta.validation.Valid;
@@ -80,11 +83,11 @@ public class WorkoutController {
     @PostMapping("/{workoutId}/exercises")
     public ResponseEntity<ApiResponse<WorkoutResponse>> addExercise(
             @PathVariable UUID workoutId,
-            @Valid @RequestBody AddExerciseRequest request) {
+            @Valid @RequestBody AddExercisesRequest request) {
         UUID userId = getCurrentUserId();
         log.info("Received add exercise request for workoutId={}", workoutId);
-        WorkoutResponse workout = workoutService.addExercise(userId, workoutId, request);
-        return ResponseEntity.ok(ApiResponse.success("Exercise added", workout));
+        WorkoutResponse workout = workoutService.addExercise(userId, workoutId, request.getExerciseIds());
+        return ResponseEntity.ok(ApiResponse.success("Exercises added", workout));
     }
 
     @DeleteMapping("/{workoutId}/exercises/{exerciseId}")
@@ -98,15 +101,16 @@ public class WorkoutController {
         return ResponseEntity.ok(ApiResponse.success("Exercise removed", workout));
     }
 
-    @GetMapping("/{workoutId}/exercises/{exerciseId}/alternatives")
+    @GetMapping("/{workoutId}/alternatives")
     public ResponseEntity<ApiResponse<List<WorkoutExerciseResponse>>> getAlternatives(
             @PathVariable UUID workoutId,
-            @PathVariable UUID exerciseId) {
+            @RequestParam(required = false) ExerciseCategory category,
+            @RequestParam(required = false) MuscleGroup muscle) {
         UUID userId = getCurrentUserId();
-        log.info("Received alternatives request for workoutId={}, exerciseId={}",
-                workoutId, exerciseId);
+        log.info("Received alternatives request for workoutId={}, category={}, muscle={}",
+                workoutId, category, muscle);
         List<WorkoutExerciseResponse> alternatives =
-                workoutService.getAlternativeExercises(userId, workoutId, exerciseId);
+                workoutService.getAlternativeExercises(userId, workoutId, category, muscle);
         return ResponseEntity.ok(ApiResponse.success(alternatives));
     }
 

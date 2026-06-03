@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.harish.flexfit.dto.request.AddExerciseRequest;
 import com.harish.flexfit.dto.request.LogSetRequest;
 
 import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
@@ -134,43 +133,44 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     @Transactional
-    public WorkoutResponse addExercise(UUID userId, UUID workoutId, AddExerciseRequest request) {
-        log.info("Adding exercise to workout id={} for userId={}", workoutId, userId);
+    public WorkoutResponse addExercise(UUID userId, UUID workoutId, List<UUID> exerciseIds) {
+        log.info("Adding {} exercises to workout id={}", exerciseIds.size(), workoutId);
         Workout workout = getOwnedWorkout(userId, workoutId);
-
-        Exercise exercise = exerciseRepository.findById(request.getExerciseId())
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
-
-        if (exercise.getCategory() != request.getPhase()) {
-            throw new BadRequestException(
-                    "Exercise category does not match requested phase");
-        }
-
         UserProfile profile = workout.getUserProfile();
-        validateEquipmentCompatibility(exercise, profile);
 
-        validateNotUsedRecently(profile.getId(), exercise.getId());
-
-        if (isExerciseInWorkout(workout, exercise.getId())) {
-            throw new BadRequestException("Exercise already exists in this workout");
+        Map<ExerciseCategory, Integer> maxOrders = new java.util.HashMap<>();
+        for (ExerciseCategory phase : ExerciseCategory.values()) {
+            maxOrders.put(phase, workout.getExercises().stream()
+                    .filter(e -> e.getPhase() == phase)
+                    .mapToInt(WorkoutExercise::getSortOrder)
+                    .max()
+                    .orElse(0));
         }
 
-        int maxOrder = workout.getExercises().stream()
-                .filter(e -> e.getPhase() == request.getPhase())
-                .mapToInt(WorkoutExercise::getSortOrder)
-                .max()
-                .orElse(0);
+        for (UUID exerciseId : exerciseIds) {
+            Exercise exercise = exerciseRepository.findById(exerciseId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Exercise not found: " + exerciseId));
 
-        WorkoutExercise we = new WorkoutExercise();
-        we.setWorkout(workout);
-        we.setExercise(exercise);
-        we.setPhase(request.getPhase());
-        we.setSortOrder(maxOrder + 1);
-        we.setTargetSets(request.getTargetSets() != null ? request.getTargetSets() : getDefaultSets(profile.getFitnessGoal()));
-        we.setTargetReps(request.getTargetReps() != null ? request.getTargetReps() : getDefaultReps(profile.getFitnessGoal()));
-        we.setRestSeconds(request.getRestSeconds() != null ? request.getRestSeconds() : getDefaultRest(profile.getFitnessGoal()));
-        we.setNotes(request.getNotes());
-        workout.getExercises().add(we);
+            validateEquipmentCompatibility(exercise, profile);
+            validateNotUsedRecently(profile.getId(), exercise.getId());
+
+            if (isExerciseInWorkout(workout, exercise.getId())) {
+                throw new BadRequestException("Exercise already exists in this workout: " + exercise.getName());
+            }
+
+            ExerciseCategory phase = exercise.getCategory();
+            int sortOrder = maxOrders.merge(phase, 1, Integer::sum);
+
+            WorkoutExercise we = new WorkoutExercise();
+            we.setWorkout(workout);
+            we.setExercise(exercise);
+            we.setPhase(phase);
+            we.setSortOrder(sortOrder);
+            we.setTargetSets(getDefaultSets(profile.getFitnessGoal()));
+            we.setTargetReps(getDefaultReps(profile.getFitnessGoal()));
+            we.setRestSeconds(getDefaultRest(profile.getFitnessGoal()));
+            workout.getExercises().add(we);
+        }
 
         return map(workoutRepository.save(workout));
     }
@@ -202,14 +202,11 @@ public class WorkoutServiceImpl implements WorkoutService {
     @Override
     @Transactional(readOnly = true)
     public List<WorkoutExerciseResponse> getAlternativeExercises(
-            UUID userId, UUID workoutId, UUID exerciseId) {
-        log.info("Getting alternatives for exercise id={} in workout id={}", exerciseId, workoutId);
+            UUID userId, UUID workoutId,
+            ExerciseCategory category, MuscleGroup muscle) {
+        log.info("Getting alternatives for workout id={}, category={}, muscle={}",
+                workoutId, category, muscle);
         Workout workout = getOwnedWorkout(userId, workoutId);
-
-        WorkoutExercise we = workout.getExercises().stream()
-                .filter(e -> e.getId().equals(exerciseId))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found in workout"));
 
         UserProfile profile = workout.getUserProfile();
         Set<UUID> recentExerciseIds = getRecentExerciseIds(profile.getId());
@@ -217,22 +214,18 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .map(e -> e.getExercise().getId())
                 .collect(Collectors.toSet());
 
-        List<Exercise> candidates = findSuitableExercises(
-                we.getPhase(),
-                we.getExercise().getPrimaryMuscle(),
-                profile);
+        List<Exercise> candidates = findSuitableExercises(category, muscle, profile);
 
         return candidates.stream()
                 .filter(e -> !recentExerciseIds.contains(e.getId()))
                 .filter(e -> !currentExerciseIds.contains(e.getId()))
-                .filter(e -> !e.getId().equals(we.getExercise().getId()))
                 .map(e -> WorkoutExerciseResponse.builder()
                         .exerciseId(e.getId())
                         .exerciseName(e.getName())
                         .primaryMuscle(e.getPrimaryMuscle())
                         .secondaryMuscles(e.getSecondaryMuscles())
                         .exerciseType(e.getExerciseType())
-                        .phase(we.getPhase())
+                        .phase(category)
                         .mediaUrl(e.getMediaUrl())
                         .build())
                 .toList();
@@ -445,7 +438,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         Set<DifficultyLevel> allowedDifficulties = getAllowedDifficulties(profile.getExperienceLevel());
 
         return exerciseRepository.findAll().stream()
-                .filter(e -> e.getCategory() == category)
+                .filter(e -> category == null || e.getCategory() == category)
                 .filter(e -> muscle == null || e.getPrimaryMuscle() == muscle)
                 .filter(e -> allowedDifficulties.contains(e.getDifficultyLevel()))
                 .filter(e -> isEquipmentCompatible(e, userEquipmentIds))
