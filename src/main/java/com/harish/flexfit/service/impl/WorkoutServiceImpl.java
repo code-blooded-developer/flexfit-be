@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -592,11 +594,20 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .map(this::mapExercise)
                 .toList();
 
+        MuscleGroup targetMuscle = exerciseResponses.stream()
+                .map(WorkoutExerciseResponse::getPrimaryMuscle)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
         return WorkoutResponse.builder()
                 .id(workout.getId())
                 .date(workout.getDate())
                 .totalDurationMinutes(workout.getTotalDurationMinutes())
                 .status(workout.getStatus())
+                .targetMuscle(targetMuscle)
                 .exercises(exerciseResponses)
                 .build();
     }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import com.harish.flexfit.enums.MuscleGroup;
 import com.harish.flexfit.enums.WorkoutStatus;
 
 import lombok.Builder;
@@ -16,5 +17,6 @@ public class WorkoutResponse {
     private LocalDate date;
     private Integer totalDurationMinutes;
     private WorkoutStatus status;
+    private MuscleGroup targetMuscle;
     private List<WorkoutExerciseResponse> exercises;
 }

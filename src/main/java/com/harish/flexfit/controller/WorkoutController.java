@@ -27,8 +27,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/workouts")
 @Slf4j
+@RequestMapping("/api/v1/workouts")
 public class WorkoutController {
 
     @Autowired
