@@ -35,4 +35,6 @@ public interface WorkoutService {
     WorkoutSetResponse updateSet(UUID userId, UUID workoutId, UUID exerciseId, UUID setId, LogSetRequest request);
 
     void deleteSet(UUID userId, UUID workoutId, UUID exerciseId, UUID setId);
+
+    void deleteWorkout(UUID userId, UUID workoutId);
 }

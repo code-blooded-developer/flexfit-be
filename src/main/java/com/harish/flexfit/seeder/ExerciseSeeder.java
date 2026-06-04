@@ -1,8 +1,8 @@
 package com.harish.flexfit.seeder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1175,62 +1175,62 @@ public class ExerciseSeeder implements CommandLineRunner {
 
                 // 🔥 CARDIO — 12 exercises
                 create("Treadmill Walk", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS),
-                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Treadmill"),
                         "Walk on a treadmill at a comfortable pace, maintaining upright posture. Swing arms naturally and land softly on your heels."),
 
                 create("Treadmill Run", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.CALVES),
-                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Treadmill"),
                         "Run on a treadmill at a steady, challenging pace. Maintain good form, relaxed shoulders, and controlled breathing."),
 
                 create("Incline Treadmill Walk", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS),
-                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Treadmill"),
                         "Walk on a treadmill at a steep incline. Drive through your heels and squeeze your glutes with each step. Avoid holding the handles."),
 
                 create("Stationary Bike", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
-                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Stationary Bike"),
                         "Cycle on a stationary bike at a steady, comfortable pace. Keep your core engaged and avoid rocking side to side."),
 
                 create("Spin Bike HIIT", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CORE),
-                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Spin Bike"),
                         "Alternate between all-out sprints and slow recovery on a spin bike. Stand on the pedals during sprints and sit during recovery."),
 
                 create("Recumbent Bike", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
-                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Recumbent Bike"),
                         "Cycle on a recumbent bike at a comfortable pace. Focus on a smooth pedal stroke and controlled breathing."),
 
                 create("Elliptical Training", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.SHOULDERS),
-                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Elliptical Trainer"),
                         "Use the elliptical trainer with a steady stride. Push and pull the handles for full-body engagement. Maintain an upright posture."),
 
                 create("Rowing Machine", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.LEGS, MuscleGroup.BICEPS, MuscleGroup.TRICEPS),
-                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Rowing Machine"),
                         "Sit on the rower, drive through your legs, lean back slightly, and pull the handle to your lower chest. Extend arms, hinge forward, and slide back."),
 
                 create("Rowing Sprint Intervals", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.BACK, MuscleGroup.BICEPS, MuscleGroup.TRICEPS),
-                        DifficultyLevel.ADVANCED, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.ADVANCED, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Rowing Machine"),
                         "Perform short, all-out rowing intervals (250-500m) with full recovery between sets. Focus on explosive leg drive and high stroke rate."),
 
                 create("Stair Climber", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CALVES),
-                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Stair Climber"),
                         "Step up continuously on the stair climber. Keep your upright posture, avoid leaning on the handles, and take full steps."),
 
                 create("Assault Bike Sprint", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.SHOULDERS, MuscleGroup.CORE),
-                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Assault Bike"),
                         "Pedal the assault bike at maximal effort using both arms and legs. Maintain a high RPM for the sprint duration."),
 
                 create("SkiErg", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.SHOULDERS, MuscleGroup.TRICEPS),
-                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("SkiErg"),
                         "Stand facing the SkiErg, drive arms down and back in a fluid ski-poling motion. Engage your core and hinge at the hips with each pull."),
 
@@ -1386,25 +1386,34 @@ public class ExerciseSeeder implements CommandLineRunner {
             exercise.setEquipments(eqList);
         });
 
-        if (exerciseRepository.count() > 0) {
-            Set<String> existingNames = exerciseRepository.findAll().stream()
-                    .map(Exercise::getName)
-                    .collect(Collectors.toSet());
+        Map<String, Exercise> existingByName = exerciseRepository.findAll().stream()
+                .collect(Collectors.toMap(Exercise::getName, e -> e));
 
-            List<Exercise> newExercises = exercises.stream()
-                    .filter(e -> !existingNames.contains(e.getName()))
-                    .toList();
+        List<Exercise> toSave = new ArrayList<>();
 
-            if (newExercises.isEmpty()) {
-                log.info("Exercises already seeded");
-                return;
+        for (Exercise exercise : exercises) {
+            Exercise existing = existingByName.get(exercise.getName());
+            if (existing == null) {
+                toSave.add(exercise);
+            } else {
+                existing.setPrimaryMuscle(exercise.getPrimaryMuscle());
+                existing.setSecondaryMuscles(exercise.getSecondaryMuscles());
+                existing.setDifficultyLevel(exercise.getDifficultyLevel());
+                existing.setExerciseType(exercise.getExerciseType());
+                existing.setCategory(exercise.getCategory());
+                existing.setInstructions(exercise.getInstructions());
+                existing.setEquipments(exercise.getEquipments());
+                toSave.add(existing);
             }
-
-            log.info("Adding {} new exercises...", newExercises.size());
-            exerciseRepository.saveAll(newExercises);
-        } else {
-            exerciseRepository.saveAll(exercises);
         }
+
+        if (toSave.isEmpty()) {
+            log.info("Exercises already seeded");
+            return;
+        }
+
+        log.info("Saving/updating {} exercises...", toSave.size());
+        exerciseRepository.saveAll(toSave);
 
         log.info("Exercises seeded successfully");
     }

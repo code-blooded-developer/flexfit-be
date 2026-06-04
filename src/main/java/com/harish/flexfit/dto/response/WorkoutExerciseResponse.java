@@ -24,6 +24,7 @@ public class WorkoutExerciseResponse {
     private Integer targetSets;
     private String targetReps;
     private Integer restSeconds;
+    private Integer targetDurationSeconds;
     private String notes;
     private String mediaUrl;
     private List<WorkoutSetResponse> sets;

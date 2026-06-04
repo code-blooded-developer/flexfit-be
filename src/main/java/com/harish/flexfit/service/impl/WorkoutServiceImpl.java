@@ -133,6 +133,14 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     @Transactional
+    public void deleteWorkout(UUID userId, UUID workoutId) {
+        log.info("Deleting workout id={} for userId={}", workoutId, userId);
+        Workout workout = getOwnedWorkout(userId, workoutId);
+        workoutRepository.delete(workout);
+    }
+
+    @Override
+    @Transactional
     public WorkoutResponse addExercise(UUID userId, UUID workoutId, List<UUID> exerciseIds) {
         log.info("Adding {} exercises to workout id={}", exerciseIds.size(), workoutId);
         Workout workout = getOwnedWorkout(userId, workoutId);
@@ -341,12 +349,27 @@ public class WorkoutServiceImpl implements WorkoutService {
         List<Exercise> warmupPool = findSuitableExercises(
                 ExerciseCategory.WARMUP, null, profile);
         warmupPool.removeIf(e -> recentExerciseIds.contains(e.getId()));
+        List<Exercise> cardioPool = warmupPool.stream()
+                .filter(e -> e.getExerciseType() == ExerciseType.CARDIO)
+                .toList();
+        List<Exercise> regularWarmupPool = warmupPool.stream()
+                .filter(e -> e.getExerciseType() != ExerciseType.CARDIO)
+                .toList();
         List<Exercise> stretchPool = findSuitableExercises(
                 ExerciseCategory.STRETCHING, null, profile);
         stretchPool.removeIf(e -> recentExerciseIds.contains(e.getId()));
 
-        List<Exercise> selectedWarmup = pickRandom(warmupPool, WARMUP_EXERCISE_COUNT);
-        for (Exercise e : selectedWarmup) {
+        // Cardio warmup first
+        int cardioDuration = getDefaultCardioDuration(profile.getFitnessGoal());
+        for (Exercise e : pickRandom(cardioPool, 1)) {
+            WorkoutExercise we = createExerciseEntry(workout, e,
+                    ExerciseCategory.WARMUP, order++, 1, null, 0);
+            we.setTargetDurationSeconds(cardioDuration);
+            exercises.add(we);
+        }
+
+        // Regular warmup
+        for (Exercise e : pickRandom(regularWarmupPool, WARMUP_EXERCISE_COUNT)) {
             exercises.add(createExerciseEntry(workout, e,
                     ExerciseCategory.WARMUP, order++, 1, "10-15", 0));
         }
@@ -547,6 +570,14 @@ public class WorkoutServiceImpl implements WorkoutService {
         };
     }
 
+    private int getDefaultCardioDuration(FitnessGoal goal) {
+        if (goal == null) return 600;
+        return switch (goal) {
+            case LOSE_WEIGHT -> 1200;
+            default -> 600;
+        };
+    }
+
     private List<Exercise> pickRandom(List<Exercise> exercises, int count) {
         if (exercises.isEmpty()) return List.of();
         List<Exercise> shuffled = new ArrayList<>(exercises);
@@ -625,6 +656,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .targetSets(we.getTargetSets())
                 .targetReps(we.getTargetReps())
                 .restSeconds(we.getRestSeconds())
+                .targetDurationSeconds(we.getTargetDurationSeconds())
                 .notes(we.getNotes())
                 .mediaUrl(e.getMediaUrl())
                 .sets(setResponses)

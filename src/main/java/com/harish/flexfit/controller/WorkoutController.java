@@ -151,6 +151,15 @@ public class WorkoutController {
         return ResponseEntity.ok(ApiResponse.success("Set updated", set));
     }
 
+    @DeleteMapping("/{workoutId}")
+    public ResponseEntity<ApiResponse<Void>> deleteWorkout(
+            @PathVariable UUID workoutId) {
+        UUID userId = getCurrentUserId();
+        log.info("Received delete workout request for workoutId={}", workoutId);
+        workoutService.deleteWorkout(userId, workoutId);
+        return ResponseEntity.ok(ApiResponse.success("Workout deleted", null));
+    }
+
     @DeleteMapping("/{workoutId}/exercises/{exerciseId}/sets/{setId}")
     public ResponseEntity<ApiResponse<Void>> deleteSet(
             @PathVariable UUID workoutId,

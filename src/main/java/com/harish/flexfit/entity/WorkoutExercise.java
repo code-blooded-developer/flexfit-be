@@ -50,6 +50,8 @@ public class WorkoutExercise {
 
     private Integer restSeconds;
 
+    private Integer targetDurationSeconds;
+
     private String notes;
 
     @OneToMany(mappedBy = "workoutExercise", cascade = CascadeType.ALL, orphanRemoval = true)
