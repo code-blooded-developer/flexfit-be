@@ -1256,7 +1256,7 @@ public class ExerciseSeeder implements CommandLineRunner {
                         List.of("Power Rack", "Bench"),
                         "Lie on a flat bench inside the power rack. Lower the bar to your chest, pause an inch above, then press back up."),
 
-                create("Straight-Arm Pulldown", MuscleGroup.BACK, List.of(MuscleGroup.TRICEPS),
+                create("Straight-Arm Pulldown (Machine)", MuscleGroup.BACK, List.of(MuscleGroup.TRICEPS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.MAIN,
                         List.of("Lat Pulldown Machine"),
                         "Stand or sit at the lat pulldown machine with a straight bar. Keeping arms fully extended, pull the bar down to your thighs, squeezing the lats."),
