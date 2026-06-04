@@ -2,6 +2,7 @@ package com.harish.flexfit.seeder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,6 @@ public class ExerciseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-
-        if (exerciseRepository.count() > 0) {
-            log.info("Exercises already seeded");
-            return;
-        }
 
         log.info("Seeding exercises...");
 
@@ -1175,7 +1171,211 @@ public class ExerciseSeeder implements CommandLineRunner {
                 create("Garland Pose (Malasana)", MuscleGroup.LEGS, List.of(MuscleGroup.BACK, MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Squat down with feet wider than hips. Bring palms together at the chest and use elbows to press knees outward. Hold.")
+                        "Squat down with feet wider than hips. Bring palms together at the chest and use elbows to press knees outward. Hold."),
+
+                // 🔥 CARDIO — 12 exercises
+                create("Treadmill Walk", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Treadmill"),
+                        "Walk on a treadmill at a comfortable pace, maintaining upright posture. Swing arms naturally and land softly on your heels."),
+
+                create("Treadmill Run", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.CALVES),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Treadmill"),
+                        "Run on a treadmill at a steady, challenging pace. Maintain good form, relaxed shoulders, and controlled breathing."),
+
+                create("Incline Treadmill Walk", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Treadmill"),
+                        "Walk on a treadmill at a steep incline. Drive through your heels and squeeze your glutes with each step. Avoid holding the handles."),
+
+                create("Stationary Bike", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Stationary Bike"),
+                        "Cycle on a stationary bike at a steady, comfortable pace. Keep your core engaged and avoid rocking side to side."),
+
+                create("Spin Bike HIIT", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CORE),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Spin Bike"),
+                        "Alternate between all-out sprints and slow recovery on a spin bike. Stand on the pedals during sprints and sit during recovery."),
+
+                create("Recumbent Bike", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Recumbent Bike"),
+                        "Cycle on a recumbent bike at a comfortable pace. Focus on a smooth pedal stroke and controlled breathing."),
+
+                create("Elliptical Training", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.SHOULDERS),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Elliptical Trainer"),
+                        "Use the elliptical trainer with a steady stride. Push and pull the handles for full-body engagement. Maintain an upright posture."),
+
+                create("Rowing Machine", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.LEGS, MuscleGroup.BICEPS, MuscleGroup.TRICEPS),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Rowing Machine"),
+                        "Sit on the rower, drive through your legs, lean back slightly, and pull the handle to your lower chest. Extend arms, hinge forward, and slide back."),
+
+                create("Rowing Sprint Intervals", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.BACK, MuscleGroup.BICEPS, MuscleGroup.TRICEPS),
+                        DifficultyLevel.ADVANCED, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Rowing Machine"),
+                        "Perform short, all-out rowing intervals (250-500m) with full recovery between sets. Focus on explosive leg drive and high stroke rate."),
+
+                create("Stair Climber", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CALVES),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Stair Climber"),
+                        "Step up continuously on the stair climber. Keep your upright posture, avoid leaning on the handles, and take full steps."),
+
+                create("Assault Bike Sprint", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.SHOULDERS, MuscleGroup.CORE),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Assault Bike"),
+                        "Pedal the assault bike at maximal effort using both arms and legs. Maintain a high RPM for the sprint duration."),
+
+                create("SkiErg", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.SHOULDERS, MuscleGroup.TRICEPS),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("SkiErg"),
+                        "Stand facing the SkiErg, drive arms down and back in a fluid ski-poling motion. Engage your core and hinge at the hips with each pull."),
+
+                // 🔥 FREE WEIGHTS (NEW) — 2 exercises
+                create("Trap Bar Deadlift", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.BACK, MuscleGroup.GLUTES),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Trap Bar"),
+                        "Stand inside the trap bar with feet shoulder-width apart. Hinge at the hips and bend your knees to grip the handles. Drive through your heels to stand."),
+
+                create("Trap Bar Shrug", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.MAIN,
+                        List.of("Trap Bar"),
+                        "Stand holding a trap bar at arm's length. Shrug your shoulders straight up toward your ears, hold briefly, then lower."),
+
+                // 🔥 RACKS & MACHINES (NEW) — 4 exercises
+                create("Pin Squat", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CORE),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Power Rack"),
+                        "Set the safety pins in the power rack at your desired depth. Unrack the bar, squat down until the bar touches the pins, pause, then drive back up."),
+
+                create("Spoto Press", MuscleGroup.CHEST, List.of(MuscleGroup.TRICEPS, MuscleGroup.SHOULDERS),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Power Rack", "Bench"),
+                        "Lie on a flat bench inside the power rack. Lower the bar to your chest, pause an inch above, then press back up."),
+
+                create("Straight-Arm Pulldown", MuscleGroup.BACK, List.of(MuscleGroup.TRICEPS),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.MAIN,
+                        List.of("Lat Pulldown Machine"),
+                        "Stand or sit at the lat pulldown machine with a straight bar. Keeping arms fully extended, pull the bar down to your thighs, squeezing the lats."),
+
+                create("Depth Jump", MuscleGroup.LEGS, List.of(MuscleGroup.CALVES, MuscleGroup.GLUTES),
+                        DifficultyLevel.ADVANCED, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Plyometric Box"),
+                        "Stand on a box, step off, and upon landing immediately explode upward into a vertical jump. Land softly and reset."),
+
+                // 🔥 BANDS (NEW) — 4 exercises
+                create("Banded Overhead Press", MuscleGroup.SHOULDERS, List.of(MuscleGroup.TRICEPS),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Resistance Tube"),
+                        "Stand on the center of a resistance tube and hold handles at shoulder height. Press overhead until arms are fully extended."),
+
+                create("Mini Band Lateral Walk", MuscleGroup.GLUTES, List.of(MuscleGroup.LEGS),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
+                        List.of("Mini Band"),
+                        "Place a mini band around your ankles. Slight squat position, then step laterally keeping tension on the band."),
+
+                create("Clamshell", MuscleGroup.GLUTES, List.of(),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
+                        List.of("Mini Band"),
+                        "Lie on your side with a mini band around your thighs. Keeping feet together, open your top knee like a clam. Lower and repeat."),
+
+                create("Banded Squat", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CORE),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Loop Band"),
+                        "Stand on a loop band with it looped around your upper thighs. Perform a squat, pushing your knees outward against the band."),
+
+                // 🔥 GYMNASTIC RINGS — 3 exercises
+                create("Ring Push Up", MuscleGroup.CHEST, List.of(MuscleGroup.TRICEPS, MuscleGroup.SHOULDERS, MuscleGroup.CORE),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Gymnastic Rings"),
+                        "Set rings low and grip them. Lower your chest to ring height in a push-up position, keeping elbows at 45 degrees. Press back up."),
+
+                create("Ring Row", MuscleGroup.BACK, List.of(MuscleGroup.BICEPS),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Gymnastic Rings"),
+                        "Hold rings with arms extended, body at an angle. Pull your chest toward the rings, squeezing your shoulder blades together."),
+
+                create("Ring Dip", MuscleGroup.TRICEPS, List.of(MuscleGroup.CHEST, MuscleGroup.SHOULDERS),
+                        DifficultyLevel.ADVANCED, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Gymnastic Rings"),
+                        "Support yourself on rings above your head. Lower your body until shoulders are below your elbows, then press back up. Stabilize throughout."),
+
+                // 🔥 TRX — 3 exercises
+                create("TRX Row", MuscleGroup.BACK, List.of(MuscleGroup.BICEPS),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("TRX Suspension Trainer"),
+                        "Hold the TRX handles with arms extended and walk feet forward. Pull your chest toward the handles, keeping your body rigid."),
+
+                create("TRX Chest Press", MuscleGroup.CHEST, List.of(MuscleGroup.TRICEPS, MuscleGroup.CORE),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("TRX Suspension Trainer"),
+                        "Face away from the anchor point and hold handles at chest height. Lean forward and lower your chest between the handles, then press back."),
+
+                create("TRX Pike", MuscleGroup.CORE, List.of(MuscleGroup.SHOULDERS),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("TRX Suspension Trainer"),
+                        "Place feet in the TRX straps and get into a plank. Pike your hips up toward the ceiling, keeping legs straight. Lower with control."),
+
+                // 🔥 FUNCTIONAL (NEW) — 4 exercises
+                create("Farmer's Walk (Heavy)", MuscleGroup.FULL_BODY, List.of(MuscleGroup.CORE, MuscleGroup.LEGS, MuscleGroup.SHOULDERS),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Farmer's Walk Handles"),
+                        "Load the farmer's walk handles and pick them up. Walk upright with a braced core, taking controlled steps for distance or time."),
+
+                create("Agility Ladder Drill", MuscleGroup.LEGS, List.of(MuscleGroup.CALVES, MuscleGroup.CORE),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Agility Ladder"),
+                        "Run through the agility ladder using quick high-knee steps. Place each foot in each square. Repeat forward, backward, and laterally."),
+
+                create("Cone Shuffle Drill", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.CORE),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Cone"),
+                        "Set cones in a pattern. Shuffle, sprint, and backpedal between cones in sequence. Focus on quick direction changes and low center of gravity."),
+
+                create("Elevated Step-Up", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Platforms"),
+                        "Stand facing a platform. Step up with one foot and drive through the heel to bring the other foot up. Step down and alternate."),
+
+                // 🔥 MOBILITY & RECOVERY (NEW) — 5 exercises
+                create("Foam Rolling (Upper Back)", MuscleGroup.BACK, List.of(MuscleGroup.SHOULDERS),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
+                        List.of("Foam Roller"),
+                        "Lie on your back with a foam roller under your upper back. Support your head with your hands. Roll slowly from mid-back to shoulders, pausing on tight spots."),
+
+                create("Foam Rolling (Quads)", MuscleGroup.LEGS, List.of(),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
+                        List.of("Foam Roller"),
+                        "Lie face down with a foam roller under your quads. Roll from hips to knees, pausing on any tight or tender areas."),
+
+                create("Foam Rolling (IT Band)", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.GLUTES),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
+                        List.of("Foam Roller"),
+                        "Lie on your side with the foam roller under your outer thigh. Roll from hip to knee along the IT band. Switch sides."),
+
+                create("Percussive Massage", MuscleGroup.FULL_BODY, List.of(),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
+                        List.of("Massage Gun"),
+                        "Use a massage gun on major muscle groups. Glide the head slowly over each muscle for 30-60 seconds. Avoid joints and bones."),
+
+                create("Lacrosse Ball Release", MuscleGroup.FULL_BODY, List.of(),
+                        DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
+                        List.of("Lacrosse Ball"),
+                        "Place a lacrosse ball under a tight or tender area (glutes, shoulders, upper back). Apply gentle pressure and breathe deeply until the tension releases."),
+
+                // 🔥 SWIMMING POOL — 2 exercises
+                create("Freestyle Swimming", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.SHOULDERS, MuscleGroup.CORE),
+                        DifficultyLevel.INTERMEDIATE, ExerciseType.COMPOUND, ExerciseCategory.MAIN,
+                        List.of("Swimming Pool"),
+                        "Swim freestyle laps using alternating arm strokes and a flutter kick. Breathe to the side every stroke cycle. Maintain a steady rhythm."),
+
+                create("Pool Running", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.CORE),
+                        DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
+                        List.of("Swimming Pool"),
+                        "Jog in place or across the pool with the water at chest height. Drive your knees and pump your arms against the water resistance.")
         );
 
         // Attach equipment
@@ -1186,7 +1386,25 @@ public class ExerciseSeeder implements CommandLineRunner {
             exercise.setEquipments(eqList);
         });
 
-        exerciseRepository.saveAll(exercises);
+        if (exerciseRepository.count() > 0) {
+            Set<String> existingNames = exerciseRepository.findAll().stream()
+                    .map(Exercise::getName)
+                    .collect(Collectors.toSet());
+
+            List<Exercise> newExercises = exercises.stream()
+                    .filter(e -> !existingNames.contains(e.getName()))
+                    .toList();
+
+            if (newExercises.isEmpty()) {
+                log.info("Exercises already seeded");
+                return;
+            }
+
+            log.info("Adding {} new exercises...", newExercises.size());
+            exerciseRepository.saveAll(newExercises);
+        } else {
+            exerciseRepository.saveAll(exercises);
+        }
 
         log.info("Exercises seeded successfully");
     }

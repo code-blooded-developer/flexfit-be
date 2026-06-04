@@ -159,7 +159,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             }
 
             ExerciseCategory phase = exercise.getCategory();
-            int sortOrder = maxOrders.merge(phase, 1, Integer::sum);
+            int sortOrder = maxOrders.merge(phase, 1, (a, b) -> a + b);
 
             WorkoutExercise we = new WorkoutExercise();
             we.setWorkout(workout);
