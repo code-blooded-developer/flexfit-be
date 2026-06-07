@@ -39,11 +39,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @Value("${jwt.cookie-name:ACCESS_TOKEN}")
-    private String accessTokenCookieName;
+    private String accessTokenCookieName = "ACCESS_TOKEN";
 
-    @Value("${jwt.refresh-cookie-name:REFRESH_TOKEN}")
-    private String refreshTokenCookieName;
+    private String refreshTokenCookieName = "REFRESH_TOKEN";
 
     @Value("${jwt.access-token-expiration:1800000}")
     private long accessTokenExpiration;
