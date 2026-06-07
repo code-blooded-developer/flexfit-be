@@ -19,6 +19,7 @@ import com.harish.flexfit.service.AuthService;
 import com.harish.flexfit.service.UserService;
 
 import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -70,22 +71,26 @@ public class AuthController {
         AuthResponse authResponse = authService.generateTokensForUser(user);
 
         // Set access token cookie
-        Cookie accessTokenCookie = new Cookie(accessTokenCookieName, authResponse.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000));
-        accessTokenCookie.setAttribute("SameSite", "None");
-        response.addCookie(accessTokenCookie);
+        ResponseCookie accessTokenCookie = ResponseCookie
+                .from(accessTokenCookieName, authResponse.getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(accessTokenExpiration / 1000)
+                .build();
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
         // Set refresh token cookie
-        Cookie refreshTokenCookie = new Cookie(refreshTokenCookieName, authResponse.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000));
-        refreshTokenCookie.setAttribute("SameSite", "None");
-        response.addCookie(refreshTokenCookie);
+        ResponseCookie refreshTokenCookie = ResponseCookie
+                .from(refreshTokenCookieName, authResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(refreshTokenExpiration / 1000)
+                .build();
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
         
         return ResponseEntity.ok(
             ApiResponse.success("User registered successfully", userResponse)
@@ -103,22 +108,26 @@ public class AuthController {
         log.info("Login successful for email: {}", request.getEmail());
 
         // Set access token cookie
-        Cookie accessTokenCookie = new Cookie(accessTokenCookieName, authResponse.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000));
-        accessTokenCookie.setAttribute("SameSite", "None");
-        response.addCookie(accessTokenCookie);
+        ResponseCookie accessTokenCookie = ResponseCookie
+                .from(accessTokenCookieName, authResponse.getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(accessTokenExpiration / 1000)
+                .build();
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
         // Set refresh token cookie
-        Cookie refreshTokenCookie = new Cookie(refreshTokenCookieName, authResponse.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000));
-        refreshTokenCookie.setAttribute("SameSite", "None");
-        response.addCookie(refreshTokenCookie);
+        ResponseCookie refreshTokenCookie = ResponseCookie
+                .from(refreshTokenCookieName, authResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(refreshTokenExpiration / 1000)
+                .build();
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         // Return response without tokens in body (tokens are in cookies)
         AuthResponse responseWithoutTokens = new AuthResponse(
@@ -159,22 +168,26 @@ public class AuthController {
         log.info("Token refresh successful");
 
         // Set access token cookie
-        Cookie accessTokenCookie = new Cookie(accessTokenCookieName, authResponse.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000));
-        accessTokenCookie.setAttribute("SameSite", "None");
-        response.addCookie(accessTokenCookie);
+        ResponseCookie accessTokenCookie = ResponseCookie
+                .from(accessTokenCookieName, authResponse.getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(accessTokenExpiration / 1000)
+                .build();
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
         // Set refresh token cookie
-        Cookie refreshTokenCookie = new Cookie(refreshTokenCookieName, authResponse.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000));
-        refreshTokenCookie.setAttribute("SameSite", "None");
-        response.addCookie(refreshTokenCookie);
+        ResponseCookie refreshTokenCookie = ResponseCookie
+                .from(refreshTokenCookieName, authResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(refreshTokenExpiration / 1000)
+                .build();
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         // Return response without tokens in body
         AuthResponse responseWithoutTokens = new AuthResponse(
@@ -194,22 +207,26 @@ public class AuthController {
     @PostMapping("/logout")
 public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
     // Clear access token cookie
-    Cookie accessTokenCookie = new Cookie(accessTokenCookieName, null);
-    accessTokenCookie.setHttpOnly(true);
-    accessTokenCookie.setSecure(true);
-    accessTokenCookie.setPath("/");
-    accessTokenCookie.setAttribute("SameSite", "None");
-    accessTokenCookie.setMaxAge(0);
-    response.addCookie(accessTokenCookie);
+    ResponseCookie accessTokenCookie = ResponseCookie
+            .from(accessTokenCookieName, null)
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .sameSite("Lax")
+            .maxAge(0)
+            .build();
+    response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
     // Clear refresh token cookie
-    Cookie refreshTokenCookie = new Cookie(refreshTokenCookieName, null);
-    refreshTokenCookie.setHttpOnly(true);
-    refreshTokenCookie.setSecure(true);
-    refreshTokenCookie.setPath("/");
-    refreshTokenCookie.setAttribute("SameSite", "None");
-    refreshTokenCookie.setMaxAge(0);
-    response.addCookie(refreshTokenCookie);
+    ResponseCookie refreshTokenCookie = ResponseCookie
+            .from(refreshTokenCookieName, null)
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .sameSite("Lax")
+            .maxAge(0)
+            .build();
+    response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
     return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
 }
