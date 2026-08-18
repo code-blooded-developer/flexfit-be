@@ -103,6 +103,7 @@ public class ExerciseServiceImpl implements ExerciseService {
                 .difficultyLevel(exercise.getDifficultyLevel())
                 .exerciseType(exercise.getExerciseType())
                 .category(exercise.getCategory())
+                .measurementType(exercise.getMeasurementType())
                 .equipmentNames(equipmentNames)
                 .mediaUrl(exercise.getMediaUrl())
                 .mediaType(exercise.getMediaType())

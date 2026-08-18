@@ -3,6 +3,7 @@ package com.harish.flexfit.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import com.harish.flexfit.enums.ExerciseCategory;
 import com.harish.flexfit.enums.ExerciseType;
 import com.harish.flexfit.enums.ExperienceLevel;
 import com.harish.flexfit.enums.FitnessGoal;
+import com.harish.flexfit.enums.MeasurementType;
 import com.harish.flexfit.enums.MuscleGroup;
 import com.harish.flexfit.enums.WorkoutSplit;
 import com.harish.flexfit.enums.WorkoutStatus;
@@ -175,8 +177,14 @@ public class WorkoutServiceImpl implements WorkoutService {
             we.setPhase(phase);
             we.setSortOrder(sortOrder);
             we.setTargetSets(getDefaultSets(profile.getFitnessGoal()));
-            we.setTargetReps(getDefaultReps(profile.getFitnessGoal()));
             we.setRestSeconds(getDefaultRest(profile.getFitnessGoal()));
+
+            if (exercise.getMeasurementType() == MeasurementType.DURATION) {
+                we.setTargetDurationSeconds(30);
+            } else {
+                we.setTargetReps(getDefaultReps(profile.getFitnessGoal()));
+            }
+
             workout.getExercises().add(we);
         }
 
@@ -233,6 +241,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                         .primaryMuscle(e.getPrimaryMuscle())
                         .secondaryMuscles(e.getSecondaryMuscles())
                         .exerciseType(e.getExerciseType())
+                        .measurementType(e.getMeasurementType())
                         .phase(category)
                         .mediaUrl(e.getMediaUrl())
                         .build())
@@ -363,16 +372,19 @@ public class WorkoutServiceImpl implements WorkoutService {
         int cardioDuration = getDefaultCardioDuration(profile.getFitnessGoal());
         for (Exercise e : pickRandom(cardioPool, 1)) {
             WorkoutExercise we = createExerciseEntry(workout, e,
-                    ExerciseCategory.WARMUP, order++, 1, null, 0);
-            we.setTargetDurationSeconds(cardioDuration);
+                    ExerciseCategory.WARMUP, order++, 1, null, 0, cardioDuration);
             exercises.add(we);
         }
 
         // Regular warmup
-        for (Exercise e : pickRandom(regularWarmupPool, WARMUP_EXERCISE_COUNT)) {
+        for (Exercise e : pickTargetedExercises(regularWarmupPool, targetMuscles, WARMUP_EXERCISE_COUNT)) {
+            Integer warmupDuration = e.getMeasurementType() == MeasurementType.DURATION ? 30 : null;
             exercises.add(createExerciseEntry(workout, e,
-                    ExerciseCategory.WARMUP, order++, 1, "10-15", 0));
+                    ExerciseCategory.WARMUP, order++, 1, "10-15", 0, warmupDuration));
         }
+
+        Map<MuscleGroup, Integer> exercisesPerMuscle =
+                calculateMainExercisesPerMuscle(targetMuscles, totalMin, profile.getFitnessGoal());
 
         for (MuscleGroup muscle : targetMuscles) {
             List<Exercise> mainPool = findSuitableExercises(
@@ -386,9 +398,13 @@ public class WorkoutServiceImpl implements WorkoutService {
                     .filter(e -> e.getExerciseType() == ExerciseType.ISOLATION)
                     .collect(Collectors.toList());
 
+            int count = exercisesPerMuscle.get(muscle);
+            int compoundCount = Math.min((count + 1) / 2, compounds.size());
+            int isolationCount = Math.min(count - compoundCount, isolations.size());
+
             List<Exercise> selected = new ArrayList<>();
-            selected.addAll(pickRandom(compounds, 1));
-            selected.addAll(pickRandom(isolations, 1));
+            selected.addAll(pickRandom(compounds, compoundCount));
+            selected.addAll(pickRandom(isolations, isolationCount));
             selected = selected.stream().distinct().collect(Collectors.toList());
 
             int sets = getDefaultSets(profile.getFitnessGoal());
@@ -398,15 +414,15 @@ public class WorkoutServiceImpl implements WorkoutService {
             for (Exercise e : selected) {
                 if (!recentExerciseIds.contains(e.getId())) {
                     exercises.add(createExerciseEntry(workout, e,
-                            ExerciseCategory.MAIN, order++, sets, reps, rest));
+                            ExerciseCategory.MAIN, order++, sets, reps, rest, null));
                 }
             }
         }
 
-        List<Exercise> selectedStretch = pickRandom(stretchPool, STRETCH_EXERCISE_COUNT);
+        List<Exercise> selectedStretch = pickTargetedExercises(stretchPool, targetMuscles, STRETCH_EXERCISE_COUNT);
         for (Exercise e : selectedStretch) {
             exercises.add(createExerciseEntry(workout, e,
-                    ExerciseCategory.STRETCHING, order++, 1, "20-30s", 0));
+                    ExerciseCategory.STRETCHING, order++, 1, null, 0, 25));
         }
 
         workout.setExercises(exercises);
@@ -437,11 +453,11 @@ public class WorkoutServiceImpl implements WorkoutService {
                         MuscleGroup.CALVES, MuscleGroup.CORE);
             };
             case BRO_SPLIT -> switch (dayIndex) {
-                case 0 -> List.of(MuscleGroup.CHEST, MuscleGroup.TRICEPS);
-                case 1 -> List.of(MuscleGroup.BACK, MuscleGroup.BICEPS);
-                case 2 -> List.of(MuscleGroup.LEGS, MuscleGroup.CORE);
-                case 3 -> List.of(MuscleGroup.SHOULDERS);
-                default -> List.of(MuscleGroup.BICEPS, MuscleGroup.TRICEPS, MuscleGroup.CORE);
+                case 0 -> List.of(MuscleGroup.CHEST);
+                case 1 -> List.of(MuscleGroup.BACK);
+                case 2 -> List.of(MuscleGroup.SHOULDERS);
+                case 3 -> List.of(MuscleGroup.LEGS);
+                default -> List.of(MuscleGroup.BICEPS, MuscleGroup.TRICEPS);
             };
         };
     }
@@ -528,15 +544,24 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     private WorkoutExercise createExerciseEntry(
             Workout workout, Exercise exercise, ExerciseCategory phase,
-            int order, int sets, String reps, int rest) {
+            int order, int sets, String reps, int rest, Integer duration) {
         WorkoutExercise we = new WorkoutExercise();
         we.setWorkout(workout);
         we.setExercise(exercise);
         we.setPhase(phase);
         we.setSortOrder(order);
         we.setTargetSets(sets);
-        we.setTargetReps(reps);
         we.setRestSeconds(rest);
+
+        MeasurementType mt = exercise.getMeasurementType();
+        if (mt == MeasurementType.DURATION && duration != null) {
+            we.setTargetDurationSeconds(duration);
+            we.setTargetReps(null);
+        } else {
+            we.setTargetReps(reps);
+            we.setTargetDurationSeconds(null);
+        }
+
         return we;
     }
 
@@ -578,11 +603,100 @@ public class WorkoutServiceImpl implements WorkoutService {
         };
     }
 
+    private int estimateTimePerExercise(FitnessGoal goal) {
+        int sets = getDefaultSets(goal);
+        int rest = getDefaultRest(goal);
+        return (sets * 40) + ((sets - 1) * rest);
+    }
+
+    private int estimateWarmupDuration(FitnessGoal goal) {
+        int cardioDuration = getDefaultCardioDuration(goal);
+        int regularWarmupDuration = WARMUP_EXERCISE_COUNT * 120;
+        return cardioDuration + regularWarmupDuration;
+    }
+
+    private Map<MuscleGroup, Integer> calculateMainExercisesPerMuscle(
+            List<MuscleGroup> targetMuscles, int totalDurationMinutes, FitnessGoal goal) {
+        int warmupSeconds = estimateWarmupDuration(goal);
+        int stretchSeconds = STRETCH_EXERCISE_COUNT * 120;
+        int mainBudgetSeconds = (totalDurationMinutes * 60) - warmupSeconds - stretchSeconds;
+
+        int timePerExercise = estimateTimePerExercise(goal);
+        int totalExercises = mainBudgetSeconds > 0
+                ? mainBudgetSeconds / timePerExercise
+                : 1;
+
+        int muscleCount = targetMuscles.size();
+        int exercisesPerMuscle = Math.max(1, totalExercises / muscleCount);
+        exercisesPerMuscle = Math.min(exercisesPerMuscle, 4);
+
+        Map<MuscleGroup, Integer> result = new HashMap<>();
+        for (MuscleGroup muscle : targetMuscles) {
+            result.put(muscle, exercisesPerMuscle);
+        }
+
+        int remaining = totalExercises - (exercisesPerMuscle * muscleCount);
+        for (MuscleGroup muscle : targetMuscles) {
+            if (remaining <= 0) break;
+            result.merge(muscle, 1, Integer::sum);
+            remaining--;
+        }
+
+        return result;
+    }
+
     private List<Exercise> pickRandom(List<Exercise> exercises, int count) {
         if (exercises.isEmpty()) return List.of();
         List<Exercise> shuffled = new ArrayList<>(exercises);
         Collections.shuffle(shuffled);
         return shuffled.subList(0, Math.min(count, shuffled.size()));
+    }
+
+    private List<Exercise> pickTargetedExercises(
+            List<Exercise> pool, List<MuscleGroup> targetMuscles, int count) {
+        Set<MuscleGroup> targetSet = Set.copyOf(targetMuscles);
+        List<Exercise> result = new ArrayList<>();
+        Set<UUID> selectedIds = new java.util.HashSet<>();
+
+        List<Exercise> primaryMatch = pool.stream()
+                .filter(e -> targetSet.contains(e.getPrimaryMuscle()))
+                .collect(Collectors.toList());
+        for (Exercise e : pickRandom(primaryMatch, count)) {
+            result.add(e);
+            selectedIds.add(e.getId());
+        }
+
+        if (result.size() < count) {
+            List<Exercise> secondaryMatch = pool.stream()
+                    .filter(e -> !selectedIds.contains(e.getId()))
+                    .filter(e -> e.getSecondaryMuscles() != null
+                            && e.getSecondaryMuscles().stream().anyMatch(targetSet::contains))
+                    .collect(Collectors.toList());
+            for (Exercise e : pickRandom(secondaryMatch, count - result.size())) {
+                result.add(e);
+                selectedIds.add(e.getId());
+            }
+        }
+
+        if (result.size() < count) {
+            List<Exercise> fullBody = pool.stream()
+                    .filter(e -> !selectedIds.contains(e.getId()))
+                    .filter(e -> e.getPrimaryMuscle() == MuscleGroup.FULL_BODY)
+                    .collect(Collectors.toList());
+            for (Exercise e : pickRandom(fullBody, count - result.size())) {
+                result.add(e);
+                selectedIds.add(e.getId());
+            }
+        }
+
+        if (result.size() < count) {
+            List<Exercise> remaining = pool.stream()
+                    .filter(e -> !selectedIds.contains(e.getId()))
+                    .collect(Collectors.toList());
+            result.addAll(pickRandom(remaining, count - result.size()));
+        }
+
+        return result;
     }
 
     private UserProfile getProfile(UUID userId) {
@@ -651,6 +765,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .primaryMuscle(e.getPrimaryMuscle())
                 .secondaryMuscles(e.getSecondaryMuscles())
                 .exerciseType(e.getExerciseType())
+                .measurementType(e.getMeasurementType())
                 .phase(we.getPhase())
                 .sortOrder(we.getSortOrder())
                 .targetSets(we.getTargetSets())

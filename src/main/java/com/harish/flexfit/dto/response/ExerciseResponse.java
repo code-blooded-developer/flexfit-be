@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.harish.flexfit.enums.DifficultyLevel;
 import com.harish.flexfit.enums.ExerciseCategory;
 import com.harish.flexfit.enums.ExerciseType;
+import com.harish.flexfit.enums.MeasurementType;
 import com.harish.flexfit.enums.MediaType;
 import com.harish.flexfit.enums.MuscleGroup;
 
@@ -24,6 +25,7 @@ public class ExerciseResponse {
     private DifficultyLevel difficultyLevel;
     private ExerciseType exerciseType;
     private ExerciseCategory category;
+    private MeasurementType measurementType;
 
     private List<String> equipmentNames;
 

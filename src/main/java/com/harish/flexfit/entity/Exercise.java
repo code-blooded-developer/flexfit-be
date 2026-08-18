@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.harish.flexfit.enums.DifficultyLevel;
 import com.harish.flexfit.enums.ExerciseCategory;
 import com.harish.flexfit.enums.ExerciseType;
+import com.harish.flexfit.enums.MeasurementType;
 import com.harish.flexfit.enums.MediaType;
 import com.harish.flexfit.enums.MuscleGroup;
 
@@ -59,6 +60,9 @@ public class Exercise {
 
     @Enumerated(EnumType.STRING)
     private ExerciseCategory category;
+
+    @Enumerated(EnumType.STRING)
+    private MeasurementType measurementType;
 
     @ManyToMany
     @JoinTable(

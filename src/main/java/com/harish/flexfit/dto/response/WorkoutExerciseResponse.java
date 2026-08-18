@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.harish.flexfit.enums.ExerciseCategory;
 import com.harish.flexfit.enums.ExerciseType;
+import com.harish.flexfit.enums.MeasurementType;
 import com.harish.flexfit.enums.MuscleGroup;
 
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class WorkoutExerciseResponse {
     private MuscleGroup primaryMuscle;
     private List<MuscleGroup> secondaryMuscles;
     private ExerciseType exerciseType;
+    private MeasurementType measurementType;
     private ExerciseCategory phase;
     private Integer sortOrder;
     private Integer targetSets;

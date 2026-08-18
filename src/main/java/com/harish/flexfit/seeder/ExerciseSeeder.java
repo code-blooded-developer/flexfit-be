@@ -14,6 +14,7 @@ import com.harish.flexfit.entity.Exercise;
 import com.harish.flexfit.enums.DifficultyLevel;
 import com.harish.flexfit.enums.ExerciseCategory;
 import com.harish.flexfit.enums.ExerciseType;
+import com.harish.flexfit.enums.MeasurementType;
 import com.harish.flexfit.enums.MuscleGroup;
 import com.harish.flexfit.repo.EquipmentRepository;
 import com.harish.flexfit.repo.ExerciseRepository;
@@ -825,7 +826,7 @@ public class ExerciseSeeder implements CommandLineRunner {
                 create("Arm Circles", MuscleGroup.SHOULDERS, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of(),
-                        "Stand with arms extended out to sides. Make small circles forward, gradually increasing size. Reverse direction after 30 seconds."),
+                        "Stand with arms extended out to sides. Make small circles forward, gradually increasing size. Reverse direction after 30 seconds.", MeasurementType.DURATION),
 
                 create("High Knees", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.CORE),
                         DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
@@ -890,32 +891,32 @@ public class ExerciseSeeder implements CommandLineRunner {
                 create("Cat-Cow Stretch", MuscleGroup.BACK, List.of(MuscleGroup.CORE),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of("Yoga Mat"),
-                        "Start on hands and knees. Inhale, arch back and lift head (cow). Exhale, round spine and tuck chin (cat). Move slowly."),
+                        "Start on hands and knees. Inhale, arch back and lift head (cow). Exhale, round spine and tuck chin (cat). Move slowly.", MeasurementType.DURATION),
 
                 create("World's Greatest Stretch", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.LEGS),
                         DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
                         List.of("Yoga Mat"),
-                        "From a deep lunge with right foot forward, place left hand on floor. Rotate torso and open right arm toward ceiling. Hold. Switch sides."),
+                        "From a deep lunge with right foot forward, place left hand on floor. Rotate torso and open right arm toward ceiling. Hold. Switch sides.", MeasurementType.DURATION),
 
                 create("Thoracic Spine Rotation", MuscleGroup.BACK, List.of(MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of("Yoga Mat"),
-                        "Lie on right side with arms extended. Rotate left arm up and over to the left side, following hand with eyes. Return. Repeat on other side."),
+                        "Lie on right side with arms extended. Rotate left arm up and over to the left side, following hand with eyes. Return. Repeat on other side.", MeasurementType.DURATION),
 
                 create("Neck Rolls", MuscleGroup.FULL_BODY, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of(),
-                        "Slowly roll head in a circle, bringing chin to chest, ear to shoulder, and head back. Alternate directions."),
+                        "Slowly roll head in a circle, bringing chin to chest, ear to shoulder, and head back. Alternate directions.", MeasurementType.DURATION),
 
                 create("Ankle Rolls", MuscleGroup.FULL_BODY, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of(),
-                        "Lift one foot and rotate ankle clockwise then counterclockwise. Repeat with other foot."),
+                        "Lift one foot and rotate ankle clockwise then counterclockwise. Repeat with other foot.", MeasurementType.DURATION),
 
                 create("Wrist Circles", MuscleGroup.FULL_BODY, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of(),
-                        "Extend arms forward and rotate wrists in circles. Alternate directions."),
+                        "Extend arms forward and rotate wrists in circles. Alternate directions.", MeasurementType.DURATION),
 
                 create("Glute Bridges", MuscleGroup.GLUTES, List.of(MuscleGroup.HAMSTRINGS, MuscleGroup.CORE),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
@@ -935,12 +936,12 @@ public class ExerciseSeeder implements CommandLineRunner {
                 create("Dead Bugs", MuscleGroup.CORE, List.of(MuscleGroup.FULL_BODY),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of("Yoga Mat"),
-                        "Lie on back with arms extended up and knees at 90 degrees. Slowly extend opposite arm and leg toward floor. Return to center and alternate."),
+                        "Lie on back with arms extended up and knees at 90 degrees. Slowly extend opposite arm and leg toward floor. Return to center and alternate.", MeasurementType.DURATION),
 
                 create("Bird-Dog", MuscleGroup.CORE, List.of(MuscleGroup.BACK, MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
                         List.of("Yoga Mat"),
-                        "Start on hands and knees. Simultaneously extend right arm forward and left leg back. Hold briefly, then switch sides."),
+                        "Start on hands and knees. Simultaneously extend right arm forward and left leg back. Hold briefly, then switch sides.", MeasurementType.DURATION),
 
                 create("Fire Hydrants", MuscleGroup.GLUTES, List.of(MuscleGroup.CORE),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
@@ -960,12 +961,12 @@ public class ExerciseSeeder implements CommandLineRunner {
                 create("Plank", MuscleGroup.CORE, List.of(MuscleGroup.FULL_BODY),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of("Yoga Mat"),
-                        "Hold a straight line from head to heels on forearms and toes. Keep core braced and hips level. Breathe steadily."),
+                        "Hold a straight line from head to heels on forearms and toes. Keep core braced and hips level. Breathe steadily.", MeasurementType.DURATION),
 
                 create("Downward Dog to Upward Dog", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
                         List.of("Yoga Mat"),
-                        "Start in plank. Push hips up and back into downward dog. Then lower hips and lift chest into upward dog. Flow between both."),
+                        "Start in plank. Push hips up and back into downward dog. Then lower hips and lift chest into upward dog. Flow between both.", MeasurementType.DURATION),
 
                 create("Bear Crawl", MuscleGroup.FULL_BODY, List.of(MuscleGroup.CORE, MuscleGroup.LEGS, MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.COMPOUND, ExerciseCategory.WARMUP,
@@ -985,254 +986,254 @@ public class ExerciseSeeder implements CommandLineRunner {
                 create("PVC Passthrough", MuscleGroup.SHOULDERS, List.of(MuscleGroup.BACK, MuscleGroup.CHEST),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of("PVC Pipe"),
-                        "Hold a PVC pipe with a wide overhand grip. Keeping arms straight, pass it overhead to behind you. Return to start."),
+                        "Hold a PVC pipe with a wide overhand grip. Keeping arms straight, pass it overhead to behind you. Return to start.", MeasurementType.DURATION),
 
                 create("Shoulder Passthrough", MuscleGroup.SHOULDERS, List.of(MuscleGroup.BACK, MuscleGroup.CHEST),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.WARMUP,
                         List.of("Resistance Band"),
-                        "Hold a resistance band or dowel with wide grip. Pass it overhead to behind the body and back. Keep arms straight."),
+                        "Hold a resistance band or dowel with wide grip. Pass it overhead to behind the body and back. Keep arms straight.", MeasurementType.DURATION),
 
                 // 🔥 STRETCHING — 35 exercises
                 create("Chest Stretch", MuscleGroup.CHEST, List.of(MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Stand near a wall or door frame. Place forearm on the frame and gently rotate away. Hold and repeat on the other side."),
+                        "Stand near a wall or door frame. Place forearm on the frame and gently rotate away. Hold and repeat on the other side.", MeasurementType.DURATION),
 
                 create("Doorway Chest Stretch", MuscleGroup.CHEST, List.of(MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Stand in a doorway with hands on each side at shoulder height. Lean forward until a stretch is felt in the chest. Hold."),
+                        "Stand in a doorway with hands on each side at shoulder height. Lean forward until a stretch is felt in the chest. Hold.", MeasurementType.DURATION),
 
                 create("Hamstring Stretch", MuscleGroup.HAMSTRINGS, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Sit on the floor with one leg extended and the other bent. Reach toward the extended foot. Hold and switch legs."),
+                        "Sit on the floor with one leg extended and the other bent. Reach toward the extended foot. Hold and switch legs.", MeasurementType.DURATION),
 
                 create("Cross-Body Shoulder Stretch", MuscleGroup.SHOULDERS, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Bring one arm across the body at shoulder height. Use the other hand to gently pull it closer. Hold and switch sides."),
+                        "Bring one arm across the body at shoulder height. Use the other hand to gently pull it closer. Hold and switch sides.", MeasurementType.DURATION),
 
                 create("Overhead Triceps Stretch", MuscleGroup.TRICEPS, List.of(MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Raise one arm overhead and bend the elbow, reaching hand down the back. Use the other hand to gently push the elbow. Switch sides."),
+                        "Raise one arm overhead and bend the elbow, reaching hand down the back. Use the other hand to gently push the elbow. Switch sides.", MeasurementType.DURATION),
 
                 create("Neck Side Stretch", MuscleGroup.SHOULDERS, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Sit or stand upright. Gently tilt the head toward one shoulder. Hold. Repeat on the other side."),
+                        "Sit or stand upright. Gently tilt the head toward one shoulder. Hold. Repeat on the other side.", MeasurementType.DURATION),
 
                 create("Upper Trap Stretch", MuscleGroup.SHOULDERS, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Tilt head to one side and slightly rotate chin toward the chest. Use a hand on the head for a gentle pull. Switch sides."),
+                        "Tilt head to one side and slightly rotate chin toward the chest. Use a hand on the head for a gentle pull. Switch sides.", MeasurementType.DURATION),
 
                 create("Sleeper Stretch", MuscleGroup.SHOULDERS, List.of(MuscleGroup.TRICEPS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie on the side with the shoulder pressed into the mat. Bend the elbow to 90 degrees and use the other hand to push the forearm down."),
+                        "Lie on the side with the shoulder pressed into the mat. Bend the elbow to 90 degrees and use the other hand to push the forearm down.", MeasurementType.DURATION),
 
                 create("Child's Pose", MuscleGroup.BACK, List.of(MuscleGroup.GLUTES, MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Kneel on the mat, sit back on heels, and extend arms forward on the floor. Rest forehead on the mat and breathe deeply."),
+                        "Kneel on the mat, sit back on heels, and extend arms forward on the floor. Rest forehead on the mat and breathe deeply.", MeasurementType.DURATION),
 
                 create("Seated Forward Fold", MuscleGroup.BACK, List.of(MuscleGroup.HAMSTRINGS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Sit with legs extended straight. Hinge at the hips and reach toward the feet. Keep the spine long."),
+                        "Sit with legs extended straight. Hinge at the hips and reach toward the feet. Keep the spine long.", MeasurementType.DURATION),
 
                 create("Seated Spinal Twist", MuscleGroup.BACK, List.of(MuscleGroup.CORE, MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Sit with one leg crossed over the other. Twist the torso toward the bent knee, using the opposite arm for leverage. Switch sides."),
+                        "Sit with one leg crossed over the other. Twist the torso toward the bent knee, using the opposite arm for leverage. Switch sides.", MeasurementType.DURATION),
 
                 create("Supine Spinal Twist", MuscleGroup.BACK, List.of(MuscleGroup.CORE, MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie on back, bring one knee to chest, then cross it over the body. Extend the opposite arm and turn the head. Switch sides."),
+                        "Lie on back, bring one knee to chest, then cross it over the body. Extend the opposite arm and turn the head. Switch sides.", MeasurementType.DURATION),
 
                 create("Cobra Stretch", MuscleGroup.BACK, List.of(MuscleGroup.CORE),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie face down with hands under shoulders. Gently press up, lifting the chest while keeping hips on the mat. Hold."),
+                        "Lie face down with hands under shoulders. Gently press up, lifting the chest while keeping hips on the mat. Hold.", MeasurementType.DURATION),
 
                 create("Lat Stretch (Overhead Reach)", MuscleGroup.BACK, List.of(MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Stand and reach both arms overhead, grabbing one wrist. Lean to the side, feeling the stretch along the torso. Switch sides."),
+                        "Stand and reach both arms overhead, grabbing one wrist. Lean to the side, feeling the stretch along the torso. Switch sides.", MeasurementType.DURATION),
 
                 create("Standing Side Bend", MuscleGroup.BACK, List.of(MuscleGroup.CORE),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Stand with feet together. Raise one arm overhead and lean to the opposite side. Keep hips stable. Switch sides."),
+                        "Stand with feet together. Raise one arm overhead and lean to the opposite side. Keep hips stable. Switch sides.", MeasurementType.DURATION),
 
                 create("Figure 4 Stretch (Seated)", MuscleGroup.GLUTES, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Sit on the mat, cross one ankle over the opposite knee. Gently lean forward, keeping the back straight. Switch sides."),
+                        "Sit on the mat, cross one ankle over the opposite knee. Gently lean forward, keeping the back straight. Switch sides.", MeasurementType.DURATION),
 
                 create("Figure 4 Stretch (Supine)", MuscleGroup.GLUTES, List.of(MuscleGroup.HAMSTRINGS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie on back, cross one ankle over the opposite knee. Pull the bottom leg toward the chest. Switch sides."),
+                        "Lie on back, cross one ankle over the opposite knee. Pull the bottom leg toward the chest. Switch sides.", MeasurementType.DURATION),
 
                 create("Pigeon Pose", MuscleGroup.GLUTES, List.of(MuscleGroup.HAMSTRINGS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "From a plank, bring one knee forward and place it behind the wrist. Extend the other leg behind. Lower the hips. Switch sides."),
+                        "From a plank, bring one knee forward and place it behind the wrist. Extend the other leg behind. Lower the hips. Switch sides.", MeasurementType.DURATION),
 
                 create("Happy Baby", MuscleGroup.GLUTES, List.of(MuscleGroup.HAMSTRINGS, MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie on back, grab the outsides of the feet, and gently pull knees toward the armpits. Rock side to side."),
+                        "Lie on back, grab the outsides of the feet, and gently pull knees toward the armpits. Rock side to side.", MeasurementType.DURATION),
 
                 create("Butterfly Stretch", MuscleGroup.GLUTES, List.of(MuscleGroup.LEGS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Sit with soles of feet together and knees dropped out to the sides. Gently press knees down. Hold."),
+                        "Sit with soles of feet together and knees dropped out to the sides. Gently press knees down. Hold.", MeasurementType.DURATION),
 
                 create("90/90 Stretch", MuscleGroup.GLUTES, List.of(MuscleGroup.LEGS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Sit with both knees bent at 90 degrees, front leg forward and back leg to the side. Lean forward slightly. Switch sides."),
+                        "Sit with both knees bent at 90 degrees, front leg forward and back leg to the side. Lean forward slightly. Switch sides.", MeasurementType.DURATION),
 
                 create("Kneeling Hip Flexor Stretch", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CORE),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Kneel on one knee with the other foot forward. Push hips forward while keeping the torso upright. Switch sides."),
+                        "Kneel on one knee with the other foot forward. Push hips forward while keeping the torso upright. Switch sides.", MeasurementType.DURATION),
 
                 create("Standing Quad Stretch", MuscleGroup.LEGS, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Stand on one leg, bend the other knee, and grab the ankle. Pull the heel toward the glutes. Keep knees together. Switch sides."),
+                        "Stand on one leg, bend the other knee, and grab the ankle. Pull the heel toward the glutes. Keep knees together. Switch sides.", MeasurementType.DURATION),
 
                 create("Lying Quad Stretch", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie on the side, bend the top knee, and grab the ankle. Pull the heel toward the glutes. Switch sides."),
+                        "Lie on the side, bend the top knee, and grab the ankle. Pull the heel toward the glutes. Switch sides.", MeasurementType.DURATION),
 
                 create("Half-Kneeling Adductor Stretch", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Kneel on both knees, then extend one leg out to the side. Lean slightly into the extended leg. Switch sides."),
+                        "Kneel on both knees, then extend one leg out to the side. Lean slightly into the extended leg. Switch sides.", MeasurementType.DURATION),
 
                 create("Standing Forward Fold", MuscleGroup.HAMSTRINGS, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Stand with feet hip-width apart. Hinge at the hips and fold forward, letting the head hang. Grab opposite elbows."),
+                        "Stand with feet hip-width apart. Hinge at the hips and fold forward, letting the head hang. Grab opposite elbows.", MeasurementType.DURATION),
 
                 create("Seated Hamstring Stretch", MuscleGroup.HAMSTRINGS, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat", "Stretching Strap"),
-                        "Sit with one leg extended. Loop a strap around the foot and gently pull the leg upward. Keep the back straight. Switch sides."),
+                        "Sit with one leg extended. Loop a strap around the foot and gently pull the leg upward. Keep the back straight. Switch sides.", MeasurementType.DURATION),
 
                 create("Lying Hamstring Stretch (Strap)", MuscleGroup.HAMSTRINGS, List.of(MuscleGroup.CALVES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Stretching Strap"),
-                        "Lie on back with one leg extended on the floor. Loop a strap around the other foot and pull the leg toward the chest. Switch sides."),
+                        "Lie on back with one leg extended on the floor. Loop a strap around the other foot and pull the leg toward the chest. Switch sides.", MeasurementType.DURATION),
 
                 create("Wide-Legged Forward Fold", MuscleGroup.HAMSTRINGS, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Stand with legs wide apart. Hinge forward at the hips, lowering the head toward the floor. Rest hands on the ground."),
+                        "Stand with legs wide apart. Hinge forward at the hips, lowering the head toward the floor. Rest hands on the ground.", MeasurementType.DURATION),
 
                 create("Standing Calf Stretch", MuscleGroup.CALVES, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Stand facing a wall with one foot forward and one back. Keep the back leg straight, heel on the ground. Lean forward. Switch sides."),
+                        "Stand facing a wall with one foot forward and one back. Keep the back leg straight, heel on the ground. Lean forward. Switch sides.", MeasurementType.DURATION),
 
                 create("Heel Drop (Step)", MuscleGroup.CALVES, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Box"),
-                        "Stand on the edge of a box with heels hanging off. Lower the heels down, feeling a stretch in the calves. Hold."),
+                        "Stand on the edge of a box with heels hanging off. Lower the heels down, feeling a stretch in the calves. Hold.", MeasurementType.DURATION),
 
                 create("Abdominal Stretch (Supine)", MuscleGroup.CORE, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie on stomach with hands under shoulders. Gently press up, keeping hips on the mat. Breathe deeply."),
+                        "Lie on stomach with hands under shoulders. Gently press up, keeping hips on the mat. Breathe deeply.", MeasurementType.DURATION),
 
                 create("Side-Lying Oblique Stretch", MuscleGroup.CORE, List.of(MuscleGroup.BACK),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Yoga Mat"),
-                        "Lie on one side, extend the bottom arm forward, and sweep the top arm overhead in a arc. Hold. Switch sides."),
+                        "Lie on one side, extend the bottom arm forward, and sweep the top arm overhead in a arc. Hold. Switch sides.", MeasurementType.DURATION),
 
                 create("Wrist Flexor Stretch", MuscleGroup.FULL_BODY, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Extend one arm forward with palm up. Use the other hand to gently pull the fingers back. Switch sides."),
+                        "Extend one arm forward with palm up. Use the other hand to gently pull the fingers back. Switch sides.", MeasurementType.DURATION),
 
                 create("Wrist Extensor Stretch", MuscleGroup.FULL_BODY, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Extend one arm forward with palm down. Use the other hand to gently push the fingers down. Switch sides."),
+                        "Extend one arm forward with palm down. Use the other hand to gently push the fingers down. Switch sides.", MeasurementType.DURATION),
 
                 create("Garland Pose (Malasana)", MuscleGroup.LEGS, List.of(MuscleGroup.BACK, MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of(),
-                        "Squat down with feet wider than hips. Bring palms together at the chest and use elbows to press knees outward. Hold."),
+                        "Squat down with feet wider than hips. Bring palms together at the chest and use elbows to press knees outward. Hold.", MeasurementType.DURATION),
 
                 // 🔥 CARDIO — 12 exercises
                 create("Treadmill Walk", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS),
                         DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Treadmill"),
-                        "Walk on a treadmill at a comfortable pace, maintaining upright posture. Swing arms naturally and land softly on your heels."),
+                        "Walk on a treadmill at a comfortable pace, maintaining upright posture. Swing arms naturally and land softly on your heels.", MeasurementType.DURATION),
 
                 create("Treadmill Run", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.CALVES),
                         DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Treadmill"),
-                        "Run on a treadmill at a steady, challenging pace. Maintain good form, relaxed shoulders, and controlled breathing."),
+                        "Run on a treadmill at a steady, challenging pace. Maintain good form, relaxed shoulders, and controlled breathing.", MeasurementType.DURATION),
 
                 create("Incline Treadmill Walk", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS),
                         DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Treadmill"),
-                        "Walk on a treadmill at a steep incline. Drive through your heels and squeeze your glutes with each step. Avoid holding the handles."),
+                        "Walk on a treadmill at a steep incline. Drive through your heels and squeeze your glutes with each step. Avoid holding the handles.", MeasurementType.DURATION),
 
                 create("Stationary Bike", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Stationary Bike"),
-                        "Cycle on a stationary bike at a steady, comfortable pace. Keep your core engaged and avoid rocking side to side."),
+                        "Cycle on a stationary bike at a steady, comfortable pace. Keep your core engaged and avoid rocking side to side.", MeasurementType.DURATION),
 
                 create("Spin Bike HIIT", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CORE),
                         DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Spin Bike"),
-                        "Alternate between all-out sprints and slow recovery on a spin bike. Stand on the pedals during sprints and sit during recovery."),
+                        "Alternate between all-out sprints and slow recovery on a spin bike. Stand on the pedals during sprints and sit during recovery.", MeasurementType.DURATION),
 
                 create("Recumbent Bike", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Recumbent Bike"),
-                        "Cycle on a recumbent bike at a comfortable pace. Focus on a smooth pedal stroke and controlled breathing."),
+                        "Cycle on a recumbent bike at a comfortable pace. Focus on a smooth pedal stroke and controlled breathing.", MeasurementType.DURATION),
 
                 create("Elliptical Training", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Elliptical Trainer"),
-                        "Use the elliptical trainer with a steady stride. Push and pull the handles for full-body engagement. Maintain an upright posture."),
+                        "Use the elliptical trainer with a steady stride. Push and pull the handles for full-body engagement. Maintain an upright posture.", MeasurementType.DURATION),
 
                 create("Rowing Machine", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.LEGS, MuscleGroup.BICEPS, MuscleGroup.TRICEPS),
                         DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Rowing Machine"),
-                        "Sit on the rower, drive through your legs, lean back slightly, and pull the handle to your lower chest. Extend arms, hinge forward, and slide back."),
+                        "Sit on the rower, drive through your legs, lean back slightly, and pull the handle to your lower chest. Extend arms, hinge forward, and slide back.", MeasurementType.DURATION),
 
                 create("Rowing Sprint Intervals", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.BACK, MuscleGroup.BICEPS, MuscleGroup.TRICEPS),
                         DifficultyLevel.ADVANCED, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Rowing Machine"),
-                        "Perform short, all-out rowing intervals (250-500m) with full recovery between sets. Focus on explosive leg drive and high stroke rate."),
+                        "Perform short, all-out rowing intervals (250-500m) with full recovery between sets. Focus on explosive leg drive and high stroke rate.", MeasurementType.DURATION),
 
                 create("Stair Climber", MuscleGroup.LEGS, List.of(MuscleGroup.GLUTES, MuscleGroup.CALVES),
                         DifficultyLevel.BEGINNER, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Stair Climber"),
-                        "Step up continuously on the stair climber. Keep your upright posture, avoid leaning on the handles, and take full steps."),
+                        "Step up continuously on the stair climber. Keep your upright posture, avoid leaning on the handles, and take full steps.", MeasurementType.DURATION),
 
                 create("Assault Bike Sprint", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.SHOULDERS, MuscleGroup.CORE),
                         DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("Assault Bike"),
-                        "Pedal the assault bike at maximal effort using both arms and legs. Maintain a high RPM for the sprint duration."),
+                        "Pedal the assault bike at maximal effort using both arms and legs. Maintain a high RPM for the sprint duration.", MeasurementType.DURATION),
 
                 create("SkiErg", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.SHOULDERS, MuscleGroup.TRICEPS),
                         DifficultyLevel.INTERMEDIATE, ExerciseType.CARDIO, ExerciseCategory.WARMUP,
                         List.of("SkiErg"),
-                        "Stand facing the SkiErg, drive arms down and back in a fluid ski-poling motion. Engage your core and hinge at the hips with each pull."),
+                        "Stand facing the SkiErg, drive arms down and back in a fluid ski-poling motion. Engage your core and hinge at the hips with each pull.", MeasurementType.DURATION),
 
                 // 🔥 FREE WEIGHTS (NEW) — 2 exercises
                 create("Trap Bar Deadlift", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.BACK, MuscleGroup.GLUTES),
@@ -1344,27 +1345,27 @@ public class ExerciseSeeder implements CommandLineRunner {
                 create("Foam Rolling (Upper Back)", MuscleGroup.BACK, List.of(MuscleGroup.SHOULDERS),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Foam Roller"),
-                        "Lie on your back with a foam roller under your upper back. Support your head with your hands. Roll slowly from mid-back to shoulders, pausing on tight spots."),
+                        "Lie on your back with a foam roller under your upper back. Support your head with your hands. Roll slowly from mid-back to shoulders, pausing on tight spots.", MeasurementType.DURATION),
 
                 create("Foam Rolling (Quads)", MuscleGroup.LEGS, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Foam Roller"),
-                        "Lie face down with a foam roller under your quads. Roll from hips to knees, pausing on any tight or tender areas."),
+                        "Lie face down with a foam roller under your quads. Roll from hips to knees, pausing on any tight or tender areas.", MeasurementType.DURATION),
 
                 create("Foam Rolling (IT Band)", MuscleGroup.FULL_BODY, List.of(MuscleGroup.LEGS, MuscleGroup.GLUTES),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Foam Roller"),
-                        "Lie on your side with the foam roller under your outer thigh. Roll from hip to knee along the IT band. Switch sides."),
+                        "Lie on your side with the foam roller under your outer thigh. Roll from hip to knee along the IT band. Switch sides.", MeasurementType.DURATION),
 
                 create("Percussive Massage", MuscleGroup.FULL_BODY, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Massage Gun"),
-                        "Use a massage gun on major muscle groups. Glide the head slowly over each muscle for 30-60 seconds. Avoid joints and bones."),
+                        "Use a massage gun on major muscle groups. Glide the head slowly over each muscle for 30-60 seconds. Avoid joints and bones.", MeasurementType.DURATION),
 
                 create("Lacrosse Ball Release", MuscleGroup.FULL_BODY, List.of(),
                         DifficultyLevel.BEGINNER, ExerciseType.ISOLATION, ExerciseCategory.STRETCHING,
                         List.of("Lacrosse Ball"),
-                        "Place a lacrosse ball under a tight or tender area (glutes, shoulders, upper back). Apply gentle pressure and breathe deeply until the tension releases."),
+                        "Place a lacrosse ball under a tight or tender area (glutes, shoulders, upper back). Apply gentle pressure and breathe deeply until the tension releases.", MeasurementType.DURATION),
 
                 // 🔥 SWIMMING POOL — 2 exercises
                 create("Freestyle Swimming", MuscleGroup.FULL_BODY, List.of(MuscleGroup.BACK, MuscleGroup.SHOULDERS, MuscleGroup.CORE),
@@ -1401,6 +1402,7 @@ public class ExerciseSeeder implements CommandLineRunner {
                 existing.setDifficultyLevel(exercise.getDifficultyLevel());
                 existing.setExerciseType(exercise.getExerciseType());
                 existing.setCategory(exercise.getCategory());
+                existing.setMeasurementType(exercise.getMeasurementType());
                 existing.setInstructions(exercise.getInstructions());
                 existing.setEquipments(exercise.getEquipments());
                 toSave.add(existing);
@@ -1426,6 +1428,19 @@ public class ExerciseSeeder implements CommandLineRunner {
                             ExerciseCategory category,
                             List<String> equipmentNames,
                             String instructions) {
+        return create(name, primary, secondary, difficulty, type, category,
+                equipmentNames, instructions, MeasurementType.REPS);
+    }
+
+    private Exercise create(String name,
+                            MuscleGroup primary,
+                            List<MuscleGroup> secondary,
+                            DifficultyLevel difficulty,
+                            ExerciseType type,
+                            ExerciseCategory category,
+                            List<String> equipmentNames,
+                            String instructions,
+                            MeasurementType measurementType) {
 
         Exercise e = new Exercise();
         e.setName(name);
@@ -1434,6 +1449,7 @@ public class ExerciseSeeder implements CommandLineRunner {
         e.setDifficultyLevel(difficulty);
         e.setExerciseType(type);
         e.setCategory(category);
+        e.setMeasurementType(measurementType);
         e.setInstructions(instructions);
 
         List<Equipment> equipments = equipmentNames.stream()
