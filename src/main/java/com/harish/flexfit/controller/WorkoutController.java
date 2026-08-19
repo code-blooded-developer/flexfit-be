@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.harish.flexfit.dto.request.AddExercisesRequest;
 import com.harish.flexfit.dto.request.LogSetRequest;
+import com.harish.flexfit.dto.request.SwapWorkoutRequest;
+import com.harish.flexfit.dto.response.AlternateMuscleOptionResponse;
 import com.harish.flexfit.dto.response.ApiResponse;
 import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
 import com.harish.flexfit.dto.response.WorkoutResponse;
@@ -43,6 +45,24 @@ public class WorkoutController {
         log.info("Received today's workout request for userId={}", userId);
         WorkoutResponse workout = workoutService.getTodayWorkout(userId);
         return ResponseEntity.ok(ApiResponse.success("Today's workout", workout));
+    }
+
+    @GetMapping("/today/alternate-muscles")
+    public ResponseEntity<ApiResponse<List<AlternateMuscleOptionResponse>>> getAlternateMuscles(
+            @RequestParam(required = false) MuscleGroup currentMuscle) {
+        UUID userId = getCurrentUserId();
+        log.info("Received alternate muscles request for userId={}, currentMuscle={}", userId, currentMuscle);
+        List<AlternateMuscleOptionResponse> alternates = workoutService.getAlternateMuscles(userId, currentMuscle);
+        return ResponseEntity.ok(ApiResponse.success("Alternate muscles fetched successfully", alternates));
+    }
+
+    @PostMapping("/today/swap")
+    public ResponseEntity<ApiResponse<WorkoutResponse>> swapTodayWorkout(
+            @Valid @RequestBody SwapWorkoutRequest request) {
+        UUID userId = getCurrentUserId();
+        log.info("Received swap today's workout request for userId={}, muscle={}", userId, request.getMuscle());
+        WorkoutResponse workout = workoutService.swapTodayWorkout(userId, request);
+        return ResponseEntity.ok(ApiResponse.success("Workout swapped successfully", workout));
     }
 
     @GetMapping("/history")

@@ -102,3 +102,6 @@ src/main/java/com/harish/flexfit/
   3. Main Exercises (time-budgeted distribution across muscles, balanced compound/isolation ratio, goal-based sets/reps/rest).
   4. Cooldown Stretches (4 exercises targeting the worked muscles).
 - **Alternatives & Replacements**: Alternative exercises (`GET /api/v1/workouts/{workoutId}/alternatives`) must prioritize the workout's target muscle first (Primary match $\rightarrow$ Secondary match $\rightarrow$ Others), sorted alphabetically within ranks.
+- **Workout Swap Workflow**:
+  - `GET /api/v1/workouts/today/alternate-muscles?currentMuscle=...` returns alternate split/muscle options excluding the current muscle.
+  - `POST /api/v1/workouts/today/swap` accepts `SwapWorkoutRequest` with the selected `muscle` and regenerates today's uncompleted workout for that target muscle group.

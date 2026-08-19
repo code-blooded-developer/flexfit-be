@@ -18,7 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.harish.flexfit.dto.request.LogSetRequest;
-
+import com.harish.flexfit.dto.request.SwapWorkoutRequest;
+import com.harish.flexfit.dto.response.AlternateMuscleOptionResponse;
 import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
 import com.harish.flexfit.dto.response.WorkoutResponse;
 import com.harish.flexfit.dto.response.WorkoutSetResponse;
@@ -115,6 +116,67 @@ public class WorkoutServiceImpl implements WorkoutService {
         List<Workout> workouts = workoutRepository
                 .findByUserProfile_IdAndDateBetweenOrderByDateDesc(profile.getId(), start, LocalDate.now());
         return workouts.stream().map(this::map).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AlternateMuscleOptionResponse> getAlternateMuscles(UUID userId, MuscleGroup currentMuscle) {
+        log.info("Getting alternate muscles for userId={}, currentMuscle={}", userId, currentMuscle);
+        UserProfile profile = getProfile(userId);
+        WorkoutSplit split = profile.getWorkoutSplit();
+        List<AlternateMuscleOptionResponse> options = getSplitOptions(split);
+
+        MuscleGroup effectiveCurrentMuscle = currentMuscle;
+        if (effectiveCurrentMuscle == null) {
+            LocalDate today = LocalDate.now();
+            Workout todayWorkout = workoutRepository.findByUserProfile_IdAndDate(profile.getId(), today).orElse(null);
+            if (todayWorkout != null) {
+                effectiveCurrentMuscle = getWorkoutTargetMuscle(todayWorkout);
+            } else {
+                List<MuscleGroup> defaultTargetMuscles = determineTargetMuscles(profile);
+                effectiveCurrentMuscle = defaultTargetMuscles.isEmpty() ? null : defaultTargetMuscles.get(0);
+            }
+        }
+
+        final MuscleGroup finalCurrentMuscle = effectiveCurrentMuscle;
+        return options.stream()
+                .filter(opt -> finalCurrentMuscle == null
+                        || (opt.getMuscle() != finalCurrentMuscle && !opt.getTargetMuscles().contains(finalCurrentMuscle)))
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public WorkoutResponse swapTodayWorkout(UUID userId, SwapWorkoutRequest request) {
+        log.info("Swapping today's workout for userId={} with muscle={}", userId, request.getMuscle());
+        UserProfile profile = getProfile(userId);
+        LocalDate today = LocalDate.now();
+
+        Workout workout = workoutRepository
+                .findByUserProfile_IdAndDate(profile.getId(), today)
+                .orElseGet(() -> {
+                    Workout w = new Workout();
+                    w.setUserProfile(profile);
+                    w.setDate(today);
+                    w.setTotalDurationMinutes(profile.getWorkoutDurationMinutes());
+                    w.setStatus(WorkoutStatus.PLANNED);
+                    return w;
+                });
+
+        if (workout.getStatus() == WorkoutStatus.COMPLETED) {
+            throw new BadRequestException("Cannot swap a completed workout");
+        }
+
+        List<AlternateMuscleOptionResponse> options = getSplitOptions(profile.getWorkoutSplit());
+        List<MuscleGroup> targetMuscles = options.stream()
+                .filter(opt -> opt.getMuscle() == request.getMuscle() || opt.getTargetMuscles().contains(request.getMuscle()))
+                .map(AlternateMuscleOptionResponse::getTargetMuscles)
+                .findFirst()
+                .orElse(List.of(request.getMuscle()));
+
+        Workout updated = populateWorkoutExercises(workout, profile, targetMuscles);
+        log.info("Workout swapped successfully for userId={}", userId);
+        return map(updated);
     }
 
     @Override
@@ -349,7 +411,6 @@ public class WorkoutServiceImpl implements WorkoutService {
         log.info("Generating workout for profile id={}", profile.getId());
 
         List<MuscleGroup> targetMuscles = determineTargetMuscles(profile);
-        Set<UUID> recentExerciseIds = getRecentExerciseIds(profile.getId());
         int totalMin = profile.getWorkoutDurationMinutes();
 
         Workout workout = new Workout();
@@ -357,6 +418,13 @@ public class WorkoutServiceImpl implements WorkoutService {
         workout.setDate(LocalDate.now());
         workout.setTotalDurationMinutes(totalMin);
         workout.setStatus(WorkoutStatus.PLANNED);
+
+        return populateWorkoutExercises(workout, profile, targetMuscles);
+    }
+
+    private Workout populateWorkoutExercises(Workout workout, UserProfile profile, List<MuscleGroup> targetMuscles) {
+        Set<UUID> recentExerciseIds = getRecentExerciseIds(profile.getId());
+        int totalMin = workout.getTotalDurationMinutes() != null ? workout.getTotalDurationMinutes() : profile.getWorkoutDurationMinutes();
 
         List<WorkoutExercise> exercises = new ArrayList<>();
         int order = 0;
@@ -404,7 +472,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     .filter(e -> e.getExerciseType() == ExerciseType.ISOLATION)
                     .collect(Collectors.toList());
 
-            int count = exercisesPerMuscle.get(muscle);
+            int count = exercisesPerMuscle.getOrDefault(muscle, 1);
             int compoundCount = Math.min((count + 1) / 2, compounds.size());
             int isolationCount = Math.min(count - compoundCount, isolations.size());
 
@@ -431,50 +499,107 @@ public class WorkoutServiceImpl implements WorkoutService {
                     ExerciseCategory.STRETCHING, order++, 1, null, 0, 25));
         }
 
-        workout.setExercises(exercises);
+        if (workout.getExercises() == null) {
+            workout.setExercises(new ArrayList<>());
+        } else {
+            workout.getExercises().clear();
+        }
+        workout.getExercises().addAll(exercises);
         return workoutRepository.save(workout);
+    }
+
+    private List<AlternateMuscleOptionResponse> getSplitOptions(WorkoutSplit split) {
+        if (split == null) split = WorkoutSplit.FULL_BODY;
+        return switch (split) {
+            case PUSH_PULL_LEGS -> List.of(
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(0)
+                            .name("Push")
+                            .muscle(MuscleGroup.CHEST)
+                            .targetMuscles(List.of(MuscleGroup.CHEST, MuscleGroup.SHOULDERS, MuscleGroup.TRICEPS))
+                            .build(),
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(1)
+                            .name("Pull")
+                            .muscle(MuscleGroup.BACK)
+                            .targetMuscles(List.of(MuscleGroup.BACK, MuscleGroup.BICEPS, MuscleGroup.HAMSTRINGS))
+                            .build(),
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(2)
+                            .name("Legs & Core")
+                            .muscle(MuscleGroup.LEGS)
+                            .targetMuscles(List.of(MuscleGroup.LEGS, MuscleGroup.GLUTES, MuscleGroup.CALVES, MuscleGroup.CORE))
+                            .build()
+            );
+            case UPPER_LOWER -> List.of(
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(0)
+                            .name("Upper Body")
+                            .muscle(MuscleGroup.CHEST)
+                            .targetMuscles(List.of(MuscleGroup.CHEST, MuscleGroup.BACK, MuscleGroup.SHOULDERS, MuscleGroup.BICEPS, MuscleGroup.TRICEPS))
+                            .build(),
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(1)
+                            .name("Lower Body")
+                            .muscle(MuscleGroup.LEGS)
+                            .targetMuscles(List.of(MuscleGroup.LEGS, MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES, MuscleGroup.CORE))
+                            .build()
+            );
+            case BRO_SPLIT -> List.of(
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(0)
+                            .name("Chest")
+                            .muscle(MuscleGroup.CHEST)
+                            .targetMuscles(List.of(MuscleGroup.CHEST))
+                            .build(),
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(1)
+                            .name("Back")
+                            .muscle(MuscleGroup.BACK)
+                            .targetMuscles(List.of(MuscleGroup.BACK))
+                            .build(),
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(2)
+                            .name("Shoulders")
+                            .muscle(MuscleGroup.SHOULDERS)
+                            .targetMuscles(List.of(MuscleGroup.SHOULDERS))
+                            .build(),
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(3)
+                            .name("Legs")
+                            .muscle(MuscleGroup.LEGS)
+                            .targetMuscles(List.of(MuscleGroup.LEGS))
+                            .build(),
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(4)
+                            .name("Arms")
+                            .muscle(MuscleGroup.BICEPS)
+                            .targetMuscles(List.of(MuscleGroup.BICEPS, MuscleGroup.TRICEPS))
+                            .build()
+            );
+            case FULL_BODY -> List.of(
+                    AlternateMuscleOptionResponse.builder()
+                            .splitDayIndex(0)
+                            .name("Full Body")
+                            .muscle(MuscleGroup.FULL_BODY)
+                            .targetMuscles(List.of(
+                                    MuscleGroup.CHEST, MuscleGroup.BACK, MuscleGroup.LEGS,
+                                    MuscleGroup.SHOULDERS, MuscleGroup.BICEPS,
+                                    MuscleGroup.TRICEPS, MuscleGroup.CORE))
+                            .build()
+            );
+        };
     }
 
     private List<MuscleGroup> determineTargetMuscles(UserProfile profile) {
         WorkoutSplit split = profile.getWorkoutSplit();
         if (split == null) split = WorkoutSplit.FULL_BODY;
 
+        List<AlternateMuscleOptionResponse> options = getSplitOptions(split);
         long workoutCount = workoutRepository.countByUserProfile_Id(profile.getId());
-        int dayIndex = (int) (workoutCount % getSplitLength(split));
+        int dayIndex = (int) (workoutCount % options.size());
 
-        return switch (split) {
-            case FULL_BODY -> List.of(
-                    MuscleGroup.CHEST, MuscleGroup.BACK, MuscleGroup.LEGS,
-                    MuscleGroup.SHOULDERS, MuscleGroup.BICEPS,
-                    MuscleGroup.TRICEPS, MuscleGroup.CORE);
-            case UPPER_LOWER -> dayIndex == 0
-                    ? List.of(MuscleGroup.CHEST, MuscleGroup.BACK,
-                            MuscleGroup.SHOULDERS, MuscleGroup.BICEPS, MuscleGroup.TRICEPS)
-                    : List.of(MuscleGroup.LEGS, MuscleGroup.GLUTES,
-                            MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES, MuscleGroup.CORE);
-            case PUSH_PULL_LEGS -> switch (dayIndex) {
-                case 0 -> List.of(MuscleGroup.CHEST, MuscleGroup.SHOULDERS, MuscleGroup.TRICEPS);
-                case 1 -> List.of(MuscleGroup.BACK, MuscleGroup.BICEPS, MuscleGroup.HAMSTRINGS);
-                default -> List.of(MuscleGroup.LEGS, MuscleGroup.GLUTES,
-                        MuscleGroup.CALVES, MuscleGroup.CORE);
-            };
-            case BRO_SPLIT -> switch (dayIndex) {
-                case 0 -> List.of(MuscleGroup.CHEST);
-                case 1 -> List.of(MuscleGroup.BACK);
-                case 2 -> List.of(MuscleGroup.SHOULDERS);
-                case 3 -> List.of(MuscleGroup.LEGS);
-                default -> List.of(MuscleGroup.BICEPS, MuscleGroup.TRICEPS);
-            };
-        };
-    }
-
-    private int getSplitLength(WorkoutSplit split) {
-        return switch (split) {
-            case FULL_BODY -> 1;
-            case UPPER_LOWER -> 2;
-            case PUSH_PULL_LEGS -> 3;
-            case BRO_SPLIT -> 5;
-        };
+        return options.get(dayIndex).getTargetMuscles();
     }
 
     private List<Exercise> findSuitableExercises(

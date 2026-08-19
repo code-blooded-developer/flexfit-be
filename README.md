@@ -115,6 +115,8 @@ All API routes are prefixed with `/api/v1`.
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
 | `GET` | `/api/v1/workouts/today` | JWT | Get or auto-generate today's workout |
+| `GET` | `/api/v1/workouts/today/alternate-muscles` | JWT | Get alternate muscle/split options (filtered by optional `currentMuscle`) |
+| `POST` | `/api/v1/workouts/today/swap` | JWT | Swap/regenerate today's workout for a chosen muscle option |
 | `GET` | `/api/v1/workouts/history` | JWT | Get workout history for the past 7 days |
 | `GET` | `/api/v1/workouts/{workoutId}` | JWT | Get specific workout details |
 | `POST` | `/api/v1/workouts/{workoutId}/complete` | JWT | Mark a workout as completed |

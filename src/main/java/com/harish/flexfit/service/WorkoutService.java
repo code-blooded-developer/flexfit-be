@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.harish.flexfit.dto.request.LogSetRequest;
+import com.harish.flexfit.dto.request.SwapWorkoutRequest;
+import com.harish.flexfit.dto.response.AlternateMuscleOptionResponse;
 import com.harish.flexfit.dto.response.WorkoutExerciseResponse;
 import com.harish.flexfit.dto.response.WorkoutResponse;
 import com.harish.flexfit.dto.response.WorkoutSetResponse;
@@ -16,6 +18,10 @@ public interface WorkoutService {
     WorkoutResponse getWorkoutById(UUID userId, UUID workoutId);
 
     List<WorkoutResponse> getWorkoutHistory(UUID userId);
+
+    List<AlternateMuscleOptionResponse> getAlternateMuscles(UUID userId, MuscleGroup currentMuscle);
+
+    WorkoutResponse swapTodayWorkout(UUID userId, SwapWorkoutRequest request);
 
     WorkoutResponse completeWorkout(UUID userId, UUID workoutId);
 
