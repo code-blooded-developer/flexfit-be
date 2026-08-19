@@ -3,9 +3,11 @@ package com.harish.flexfit.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -225,16 +227,20 @@ public class WorkoutServiceImpl implements WorkoutService {
         Workout workout = getOwnedWorkout(userId, workoutId);
 
         UserProfile profile = workout.getUserProfile();
+        MuscleGroup targetMuscle = muscle != null ? muscle : getWorkoutTargetMuscle(workout);
+
         Set<UUID> recentExerciseIds = getRecentExerciseIds(profile.getId());
         Set<UUID> currentExerciseIds = workout.getExercises().stream()
                 .map(e -> e.getExercise().getId())
                 .collect(Collectors.toSet());
 
-        List<Exercise> candidates = findSuitableExercises(category, muscle, profile);
+        List<Exercise> candidates = findSuitableExercises(category, null, profile);
 
         return candidates.stream()
                 .filter(e -> !recentExerciseIds.contains(e.getId()))
                 .filter(e -> !currentExerciseIds.contains(e.getId()))
+                .sorted(Comparator.comparingInt((Exercise e) -> getMuscleMatchRank(e, targetMuscle))
+                        .thenComparing(Exercise::getName, String.CASE_INSENSITIVE_ORDER))
                 .map(e -> WorkoutExerciseResponse.builder()
                         .exerciseId(e.getId())
                         .exerciseName(e.getName())
@@ -242,7 +248,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                         .secondaryMuscles(e.getSecondaryMuscles())
                         .exerciseType(e.getExerciseType())
                         .measurementType(e.getMeasurementType())
-                        .phase(category)
+                        .phase(e.getCategory())
                         .mediaUrl(e.getMediaUrl())
                         .build())
                 .toList();
@@ -723,6 +729,37 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .orElseThrow(() -> new ResourceNotFoundException("Exercise not found in workout"));
     }
 
+    private int getMuscleMatchRank(Exercise e, MuscleGroup targetMuscle) {
+        if (targetMuscle == null) {
+            return 2;
+        }
+        if (e.getPrimaryMuscle() == targetMuscle) {
+            return 0;
+        }
+        if (e.getSecondaryMuscles() != null && e.getSecondaryMuscles().contains(targetMuscle)) {
+            return 1;
+        }
+        return 2;
+    }
+
+    private MuscleGroup getWorkoutTargetMuscle(Workout workout) {
+        if (workout.getExercises() != null && !workout.getExercises().isEmpty()) {
+            MuscleGroup target = workout.getExercises().stream()
+                    .map(we -> we.getExercise().getPrimaryMuscle())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                    .entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .orElse(null);
+            if (target != null) {
+                return target;
+            }
+        }
+        List<MuscleGroup> splitTargetMuscles = determineTargetMuscles(workout.getUserProfile());
+        return splitTargetMuscles.isEmpty() ? null : splitTargetMuscles.get(0);
+    }
+
     private WorkoutResponse map(Workout workout) {
         List<WorkoutExerciseResponse> exerciseResponses = workout.getExercises().stream()
                 .sorted((a, b) -> {
@@ -733,13 +770,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .map(this::mapExercise)
                 .toList();
 
-        MuscleGroup targetMuscle = exerciseResponses.stream()
-                .map(WorkoutExerciseResponse::getPrimaryMuscle)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
+        MuscleGroup targetMuscle = getWorkoutTargetMuscle(workout);
 
         return WorkoutResponse.builder()
                 .id(workout.getId())
