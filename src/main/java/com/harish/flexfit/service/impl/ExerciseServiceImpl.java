@@ -105,8 +105,8 @@ public class ExerciseServiceImpl implements ExerciseService {
                 .category(exercise.getCategory())
                 .measurementType(exercise.getMeasurementType())
                 .equipmentNames(equipmentNames)
-                .mediaUrl(exercise.getMediaUrl())
-                .mediaType(exercise.getMediaType())
+                .thumbnailKey(exercise.getThumbnailKey())
+                .videoKey(exercise.getVideoKey())
                 .build();
     }
 }

@@ -7,7 +7,6 @@ import com.harish.flexfit.enums.DifficultyLevel;
 import com.harish.flexfit.enums.ExerciseCategory;
 import com.harish.flexfit.enums.ExerciseType;
 import com.harish.flexfit.enums.MeasurementType;
-import com.harish.flexfit.enums.MediaType;
 import com.harish.flexfit.enums.MuscleGroup;
 
 import lombok.Builder;
@@ -29,6 +28,6 @@ public class ExerciseResponse {
 
     private List<String> equipmentNames;
 
-    private String mediaUrl;
-    private MediaType mediaType;
+    private String thumbnailKey;
+    private String videoKey;
 }

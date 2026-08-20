@@ -28,6 +28,7 @@ public class WorkoutExerciseResponse {
     private Integer restSeconds;
     private Integer targetDurationSeconds;
     private String notes;
-    private String mediaUrl;
+    private String thumbnailKey;
+    private String videoKey;
     private List<WorkoutSetResponse> sets;
 }

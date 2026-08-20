@@ -11,7 +11,6 @@ import com.harish.flexfit.enums.DifficultyLevel;
 import com.harish.flexfit.enums.ExerciseCategory;
 import com.harish.flexfit.enums.ExerciseType;
 import com.harish.flexfit.enums.MeasurementType;
-import com.harish.flexfit.enums.MediaType;
 import com.harish.flexfit.enums.MuscleGroup;
 
 import jakarta.persistence.CollectionTable;
@@ -74,10 +73,11 @@ public class Exercise {
 
     private String instructions;
 
-    @Enumerated(EnumType.STRING)
-    private MediaType mediaType;
+    @Column(name = "thumbnail_key")
+    private String thumbnailKey;
 
-    private String mediaUrl;
+    @Column(name = "video_key")
+    private String videoKey;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

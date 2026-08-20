@@ -311,7 +311,8 @@ public class WorkoutServiceImpl implements WorkoutService {
                         .exerciseType(e.getExerciseType())
                         .measurementType(e.getMeasurementType())
                         .phase(e.getCategory())
-                        .mediaUrl(e.getMediaUrl())
+                        .thumbnailKey(e.getThumbnailKey())
+                        .videoKey(e.getVideoKey())
                         .build())
                 .toList();
     }
@@ -929,7 +930,8 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .restSeconds(we.getRestSeconds())
                 .targetDurationSeconds(we.getTargetDurationSeconds())
                 .notes(we.getNotes())
-                .mediaUrl(e.getMediaUrl())
+                .thumbnailKey(e.getThumbnailKey())
+                .videoKey(e.getVideoKey())
                 .sets(setResponses)
                 .build();
     }
