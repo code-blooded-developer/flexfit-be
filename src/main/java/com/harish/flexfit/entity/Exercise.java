@@ -71,6 +71,7 @@ public class Exercise {
     )
     private List<Equipment> equipments;
 
+    @Column(columnDefinition = "text")
     private String instructions;
 
     @Column(name = "thumbnail_key")
