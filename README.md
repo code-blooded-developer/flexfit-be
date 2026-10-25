@@ -156,7 +156,40 @@ src/main/java/com/harish/flexfit/
 ├── service/                      # Business logic interfaces & implementations
 ├── util/                         # Unit conversion helpers (kg/lbs, cm/inches)
 └── validator/                    # Custom validation annotations and validators
+
+scripts/
+└── upload-exercise-video.py      # Uploads exercise demo videos to Supabase Storage
 ```
+
+---
+
+## Exercise Media
+
+Demo videos live in the public Supabase Storage bucket `exercise-media`:
+
+```
+exercise-media/exercises/<exerciseId>/video-v1.mp4
+```
+
+`<exerciseId>` is the library exercise id, and `exercises.video_key` stores the
+object name (`video-v1.mp4`). Rows with a null `video_key` have no demo yet — the
+client skips the request and renders the muscle emoji instead.
+
+Videos are uploaded one at a time with `scripts/upload-exercise-video.py`, which
+walks `ExerciseSeeder.java` top to bottom and targets the first exercise without a
+`video_key`, so there is no state file to keep in sync:
+
+```bash
+scripts/upload-exercise-video.py --status                # progress and next up
+scripts/upload-exercise-video.py --sync                  # adopt objects already in the bucket
+scripts/upload-exercise-video.py                         # newest video in ~/Downloads
+scripts/upload-exercise-video.py clip.mp4                # a specific file
+scripts/upload-exercise-video.py --exercise "Plank" clip.mp4
+```
+
+The script rejects files that are not a real MP4/MOV/WebM container, compares the
+uploaded size against the local file, and only then writes `video_key`. Credentials
+are read from `.env`; pass `--db-url` to write to a deployed database.
 
 ---
 
@@ -175,6 +208,8 @@ src/main/java/com/harish/flexfit/
 | `JWT_ACCESS_TOKEN_EXPIRATION` | Access token validity in milliseconds | `1800000` (30 minutes) |
 | `JWT_REFRESH_TOKEN_EXPIRATION` | Refresh token validity in milliseconds | `604800000` (7 days) |
 | `APP_CORS_ALLOWED_ORIGINS` | Comma-separated allowed CORS origins | `http://localhost:3000` |
+| `SUPABASE_URL` | Supabase project URL, used by the exercise media upload script | `https://<project>.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service-role key for Storage writes. Server-side only — never expose it to a client | *(Required for uploads)* |
 
 ---
 
