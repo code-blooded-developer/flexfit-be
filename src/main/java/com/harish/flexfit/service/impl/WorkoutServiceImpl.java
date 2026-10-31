@@ -72,6 +72,8 @@ public class WorkoutServiceImpl implements WorkoutService {
     private static final int WARMUP_EXERCISE_COUNT = 4;
     private static final int STRETCH_EXERCISE_COUNT = 4;
     private static final int EXERCISE_EXCLUSION_DAYS = 7;
+    /** Fallback for a timed exercise created without an explicit duration. */
+    private static final int DEFAULT_DURATION_SECONDS = 30;
 
     @Override
     @Transactional
@@ -244,7 +246,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             we.setRestSeconds(getDefaultRest(profile.getFitnessGoal()));
 
             if (exercise.getMeasurementType() == MeasurementType.DURATION) {
-                we.setTargetDurationSeconds(30);
+                we.setTargetDurationSeconds(DEFAULT_DURATION_SECONDS);
             } else {
                 we.setTargetReps(getDefaultReps(profile.getFitnessGoal()));
             }
@@ -687,8 +689,10 @@ public class WorkoutServiceImpl implements WorkoutService {
         we.setRestSeconds(rest);
 
         MeasurementType mt = exercise.getMeasurementType();
-        if (mt == MeasurementType.DURATION && duration != null) {
-            we.setTargetDurationSeconds(duration);
+        if (mt == MeasurementType.DURATION) {
+            // A timed exercise always gets a duration, even when the caller did
+            // not supply one (MAIN entries pass null) — never a rep target.
+            we.setTargetDurationSeconds(duration != null ? duration : DEFAULT_DURATION_SECONDS);
             we.setTargetReps(null);
         } else {
             we.setTargetReps(reps);
